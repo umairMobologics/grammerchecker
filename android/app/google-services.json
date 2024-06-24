@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "441361950177",
+    "project_id": "grammerchecker-a9837",
+    "storage_bucket": "grammerchecker-a9837.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441361950177:android:ae6345285c97996a755ea0",
+        "android_client_info": {
+          "package_name": "com.example.grammer_checker_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsqnUZOYEQFFeyMex2SdXmz6sLS2FAdmY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
