@@ -234,11 +234,7 @@ void disposeAd() {
                                  showLoadingDialog(context,mq);
                                }
                                else {
-                                 ScaffoldMessenger.of(context).showSnackBar(
-                                   const SnackBar(
-                                     content: Text('Message cannot be empty'),
-                                   ),
-                                 );
+                                 showToast(context , 'empty'.tr );
                                }
                           }
                         : () {},

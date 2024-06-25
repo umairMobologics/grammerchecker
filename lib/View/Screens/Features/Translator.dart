@@ -308,7 +308,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
                                   );
                                   showLoadingDialog(context, mq);
                                 } else {
-                                  showToast(context , 'empty');
+                                  showToast(context , 'empty'.tr );
                                 }
                               }
                             : () {},

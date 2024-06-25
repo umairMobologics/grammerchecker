@@ -21,6 +21,8 @@ import 'package:grammer_checker_app/utils/customTextStyle.dart';
 import 'package:grammer_checker_app/utils/permissiionHandler.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../../utils/snackbar.dart';
+
 class CorrectorScreen extends StatefulWidget {
   const CorrectorScreen({super.key});
 
@@ -264,11 +266,7 @@ final TTSController ttsController = Get.put(TTSController());
                           showLoadingDialog(context,mq);
                         }
                         else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Message cannot be empty'),
-                            ),
-                          );
+                          showToast(context , 'empty'.tr );
                         }
                       } : (){},
                       text: buttontext(mq)),
