@@ -24,15 +24,6 @@ Future<String> sendQuery(BuildContext context) async {
   outputText.value = '';
   isresultLoaded.value = false;
 
-  if (controller.value.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Message cannot be empty'),
-      ),
-    );
-    return '';
-  }
-
   isloading.value = true;
 
   try {

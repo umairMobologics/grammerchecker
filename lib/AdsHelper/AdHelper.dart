@@ -109,11 +109,43 @@ class AdHelper {
 }
 
 class AdController extends GetxController {
+  RxBool isLoaded = false.obs;
+
+  Future<BannerAd?> loadAd(BuildContext context)  async{
+    // Get an AnchoredAdaptiveBannerAdSize before loading the ad.
+    final AnchoredAdaptiveBannerAdSize? size =
+     await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+        MediaQuery.of(context).size.width.truncate()) ;
+
+    if (size == null) {
+      // log('Unable to get height of anchored banner.');
+      return null ;
+    }
+
+    return BannerAd(
+      // TODO: replace these test ad units with your own ad unit.
+      adUnitId: AdHelper.bannerAd,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          log('$ad loaded: ');
+          isLoaded.value=true;
+        },
+
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          // log('Anchored adaptive banner failedToLoad: $error');
+          ad.dispose();
+        },
+      ),
+    )..load();
+  }
+
   RxBool isAdLoaded = false.obs;
 //native add
   NativeAd? loadNativeAd() {
     return NativeAd(
-      factoryId:  "small",
+       nativeTemplateStyle: NativeTemplateStyle( templateType: TemplateType.small ),
        adUnitId: AdHelper.nativeAd,
       listener: NativeAdListener(
           onAdLoaded: (ad) {

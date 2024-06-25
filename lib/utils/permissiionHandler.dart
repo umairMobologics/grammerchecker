@@ -7,7 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 class PermissionHandler {
  
   static Future<bool> checkPermissions(Permission permission) async {
-    var status = await Permission.camera.status;
+    var status = await permission.status;
     if (status.isDenied) {
       log('Access Denied');
       return false;

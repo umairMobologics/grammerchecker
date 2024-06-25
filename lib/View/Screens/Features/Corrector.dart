@@ -36,7 +36,20 @@ final TTSController ttsController = Get.put(TTSController());
     final ScrollController _scrollController = ScrollController();
  var ads = Get.put(AdController());
       NativeAd? nativeAd3;
-   @override
+
+  BannerAd? _anchoredAdaptiveAd;
+
+
+
+  @override
+  void didChangeDependencies() async{
+    super.didChangeDependencies();
+    ads.isLoaded.value = false;
+    _anchoredAdaptiveAd = await ads.loadAd(context) as BannerAd?;
+  }
+
+
+  @override
   void initState() {
     super.initState();
     // Listen for changes in isresultLoaded
@@ -77,6 +90,8 @@ final TTSController ttsController = Get.put(TTSController());
   void dispose() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       disposeAd();
+      _anchoredAdaptiveAd!.dispose();
+      _anchoredAdaptiveAd =null;
       textController.cleardata();
       ttsController.stop();
 
@@ -197,7 +212,8 @@ final TTSController ttsController = Get.put(TTSController());
                   onMicPressed: () async {
                     // Listen for changes in isresultLoaded
                     if (await PermissionHandler.checkPermissions(
-                        Permission.microphone)) {
+                        Permission.microphone) && await PermissionHandler.checkPermissions(
+                        Permission.speech)) {
                       textController.listen();
                     } else {
                       PermissionHandler.showAlertDialog(context, 'Microphone');
@@ -239,12 +255,21 @@ final TTSController ttsController = Get.put(TTSController());
 
                       InterstitialAdClass.showInterstitialAd(context);
                     }
-                        }
+
                           
                             isSelectable.value=false;
                         log("hit");
                         textController.sendQuery(context);
-                         showLoadingDialog(context,mq);
+
+                          showLoadingDialog(context,mq);
+                        }
+                        else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Message cannot be empty'),
+                            ),
+                          );
+                        }
                       } : (){},
                       text: buttontext(mq)),
                 ),
@@ -255,15 +280,22 @@ final TTSController ttsController = Get.put(TTSController());
           ),
         ),
       ),
-        bottomNavigationBar: Obx(
-        () => ads.isAdLoaded.value && nativeAd3 != null &&  !InterstitialAdClass.isInterAddLoaded.value && !AppOpenAdManager.isOpenAdLoaded.value
-            ? SizedBox(
-              
-               height: 150,
-               width: double.infinity,
-                child: AdWidget(ad: nativeAd3!))
-            : const SizedBox(),
-      )
+        bottomNavigationBar: Obx(() =>  ads.isLoaded.value &&  !InterstitialAdClass.isInterAddLoaded.value && !AppOpenAdManager.isOpenAdLoaded.value && _anchoredAdaptiveAd != null ?
+        Container(
+          decoration: BoxDecoration(
+            // color: Colors.green,
+              border: Border.all(
+                color: Colors.deepPurpleAccent,
+                width:0,
+              )
+          ),
+          width: _anchoredAdaptiveAd!.size.width.toDouble(),
+          height: _anchoredAdaptiveAd!.size.height.toDouble(),
+          child: AdWidget(ad: _anchoredAdaptiveAd!),
+        ) : SizedBox(),
+
+
+        )
     );
   }
 }

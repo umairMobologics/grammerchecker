@@ -55,6 +55,7 @@ class Languages extends Translations{
       
       //snackbar text
       'copy' : 'Copied to clipboard',
+      'empty': 'Message cannot be empty',
 
       'hint' : 'Hint!',
 
@@ -117,6 +118,7 @@ class Languages extends Translations{
 
   //snackbar text
   'copy': 'کلپ بورڈ میں کاپی ہو گیا',
+   'empty': 'پیغام خالی نہیں ہو سکتا',
   'hint' : 'اشارہ!' ,// Urdu - UR
    'exitapp' : 'ایپ سے باہر نکلیں',
   'exitappdes': 'کیا آپ ایپ سے باہر نکلنا چاہتے ہیں؟',
@@ -172,6 +174,8 @@ class Languages extends Translations{
 
   //snackbar text
   'copy' : 'Copiado al portapapeles',
+
+  'empty': 'El mensaje no puede estar vacío',
   'hint' : 'Pista!', // Spanish - ES
 
   'exitapp' : 'Salir de la aplicación',
@@ -230,6 +234,7 @@ class Languages extends Translations{
 
   //snackbar text
   'copy' : '已复制到剪贴板',
+  'empty': '消息不能为空',
   'hint' : 'Tip!',
 
   'exitapp' : '退出应用程序',
@@ -287,6 +292,7 @@ class Languages extends Translations{
 
   //snackbar text
   'copy' : 'クリップボードにコピーしました',
+  'empty': 'メッセージは空にできません',
   'hint' : 'ヒント!', // Japanese - JA
 
  'exitapp' : 'アプリを終了',
@@ -342,6 +348,7 @@ class Languages extends Translations{
 
   //snackbar text
   'copy' : 'In die Zwischenablage kopiert',
+  'empty': 'Nachricht darf nicht leer sein',
   'hint' : 'Hinweis!', // German - DE
   'exitapp' : 'App beenden',
   'exitappdes': 'Möchten Sie die App beenden?',
@@ -399,6 +406,7 @@ class Languages extends Translations{
 
   //snackbar text
   'copy' : 'Copié dans le presse-papiers',
+  'empty': 'Le message ne peut pas être vide',
   'hint' : 'Indice!', // French - FR
 
    'exitapp' : 'Quitter lapplication',
@@ -457,6 +465,7 @@ class Languages extends Translations{
 
   //snackbar text
   'copy' : 'Copiado para a área de transferência',
+  'empty': 'A mensagem não pode estar vazia',
   'hint' : 'Dica!', // Portuguese - PT
     'exitapp' : 'Sair do aplicativo',
   'exitappdes': 'Você quer sair do aplicativo?',
@@ -514,6 +523,7 @@ class Languages extends Translations{
 
   //snackbar text
   'copy' : 'Copiato negli appunti',
+  'empty': 'Il messaggio non può essere vuoto',
   'hint' : 'Suggerimento!' ,// Italian - IT
 
 
@@ -573,6 +583,7 @@ class Languages extends Translations{
 
   //snackbar text
   'copy' : 'تم النسخ إلى الحافظة',
+  'empty': 'لا يمكن أن تكون الرسالة فارغة',
   'hint' : 'تلميح!', // Arabic - AR,
 
   //exit app
@@ -633,6 +644,7 @@ class Languages extends Translations{
 
   //snackbar text
   'copy' : 'Gekopieerd naar klembord',
+  'empty': 'Bericht mag niet leeg zijn',
   'hint' : 'Hint!',
   'exitapp' : 'App afsluiten',
   'exitappdes': 'Wil je de app afsluiten?',

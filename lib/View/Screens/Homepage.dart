@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -23,6 +24,17 @@ class _HomepageState extends State<Homepage> {
 
  var ads = Get.put(AdController());
       NativeAd? nativeAd3;
+  BannerAd? _anchoredAdaptiveAd;
+
+
+
+ @override
+ void didChangeDependencies() async{
+   super.didChangeDependencies();
+   ads.isLoaded.value = false;
+   _anchoredAdaptiveAd = await ads.loadAd(context) as BannerAd?;
+ }
+
       
   @override
   void initState() {
@@ -46,6 +58,8 @@ class _HomepageState extends State<Homepage> {
   @override
   void dispose() {
    disposeAd();
+   _anchoredAdaptiveAd!.dispose();
+   _anchoredAdaptiveAd =null;
     super.dispose();
   }
   @override
@@ -206,24 +220,31 @@ class _HomepageState extends State<Homepage> {
                         
                       ],
                     ),
-//                 TextButton(
-//     onPressed: () => throw Exception(),
-//     child: const Text("Throw Test Exception"),
-// ),
+                    // TextButton(
+                    //   onPressed: () => throw Exception(),
+                    //   child: const Text("Throw Test Exception"),
+                    // ),
                   ],
                 ),
               ),
             ),
           ),
-           bottomNavigationBar: Obx(
-        () => ads.isAdLoaded.value && nativeAd3 != null &&  !InterstitialAdClass.isInterAddLoaded.value && !AppOpenAdManager.isOpenAdLoaded.value
-            ? SizedBox(
-               height: 150,
-               width: double.infinity,
-                child: AdWidget(ad: nativeAd3!))
-            : const SizedBox(),
-      )
-          ),
+          bottomNavigationBar: Obx(() =>  ads.isLoaded.value &&  !InterstitialAdClass.isInterAddLoaded.value && !AppOpenAdManager.isOpenAdLoaded.value && _anchoredAdaptiveAd != null ?
+          Container(
+            decoration: BoxDecoration(
+              // color: Colors.green,
+                border: Border.all(
+                  color: Colors.deepPurpleAccent,
+                  width:0,
+                )
+            ),
+            width: _anchoredAdaptiveAd!.size.width.toDouble(),
+            height: _anchoredAdaptiveAd!.size.height.toDouble(),
+            child: AdWidget(ad: _anchoredAdaptiveAd!),
+          ) : SizedBox(),
+
+
+    ))
     );
   }
 }

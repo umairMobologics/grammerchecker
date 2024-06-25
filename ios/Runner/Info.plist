@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSApplicationCrashOnExceptions</key>
+	<string>YES</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Grammer Checker App</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>We need access to speech recognition to enable voice commands and dictation features in the app.</string>
 	<key>NSMicrophoneUsageDescription</key>
@@ -10,16 +16,14 @@
 	<string>We need access to your photo library to allow you to select images for upload.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to your camera to allow you to take photos for upload.</string>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDisplayName</key>
-	<string>Grammer Checker App</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-2867991109567972~2647329460</string>
 	<key>CFBundleName</key>
 	<string>grammer_checker_app</string>
 	<key>CFBundlePackageType</key>

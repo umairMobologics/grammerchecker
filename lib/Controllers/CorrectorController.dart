@@ -87,11 +87,6 @@ Future<String> sendQuery(BuildContext context) async {
   outputText.value = '';
   isresultLoaded.value = false;
 
-  if (controller.value.text.isEmpty) {
-    showToast(context, 'Message cannot be empty');
-    return '';
-  }
-
   isloading.value = true;
   var finalText = "$aiGuidlines  ${controller.value.text}";
   log(finalText);

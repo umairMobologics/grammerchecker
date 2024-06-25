@@ -9,6 +9,16 @@ class TTSController extends GetxController {
   void onInit() {
     super.onInit();
     _flutterTts = FlutterTts();
+     _flutterTts.setSharedInstance(true);
+     _flutterTts.setIosAudioCategory(IosTextToSpeechAudioCategory.playback,
+        [
+          IosTextToSpeechAudioCategoryOptions.allowBluetooth,
+          IosTextToSpeechAudioCategoryOptions.allowBluetoothA2DP,
+          IosTextToSpeechAudioCategoryOptions.mixWithOthers,
+          IosTextToSpeechAudioCategoryOptions.defaultToSpeaker
+        ],
+        IosTextToSpeechAudioMode.defaultMode
+    );
     _flutterTts.setCompletionHandler(() {
       isSpeaking.value = false;
     });
