@@ -198,7 +198,7 @@ void disposeAd() {
                 ),
               ),
               SizedBox(height: mq.height * 0.02),
-              Obx(
+                  Obx(
                 () => CustomButton(
                     mq: mq,
                     ontap: !textController.isloading.value
@@ -211,11 +211,16 @@ void disposeAd() {
 
                       InterstitialAdClass.showInterstitialAd(context);
                     }
-                        }
+
                             isSelectable.value = false;
                             log("hit");
                             textController.sendQuery(context);
-                             showLoadingDialog(context,mq);
+
+                                 showLoadingDialog(context,mq);
+                               }
+                               else {
+                                 showToast(context , 'empty'.tr );
+                               }
                           }
                         : () {},
                     text: buttontext(mq)),

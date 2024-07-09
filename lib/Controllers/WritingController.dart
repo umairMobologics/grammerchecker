@@ -41,6 +41,7 @@ Enhance the following below text by addressing the following aspects:
     outputText.value = '';
     isresultLoaded.value = false;
     isListening.value = false;
+      charCount.value=0;
     speech.stop();
   }
 

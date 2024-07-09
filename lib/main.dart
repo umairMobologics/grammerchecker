@@ -8,8 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:grammer_checker_app/Localization/Languages.dart';
-import 'package:grammer_checker_app/View/Screens/BottomNav/BottomNavScreen.dart';
 import 'package:grammer_checker_app/View/Screens/Onboarding/OnboardingScreen.dart';
+import 'package:grammer_checker_app/View/Screens/SplashScreen.dart';
 import 'package:grammer_checker_app/firebase_options.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/customTextStyle.dart';
@@ -37,13 +37,13 @@ Future main() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   initScreen = preferences.getInt('initScreen');
   await preferences.setInt('initScreen', 1);
-   await Firebase.initializeApp(
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   MobileAds.instance.initialize();
 
 //crashlytics and analytics
- //analytics
+  //analytics
   FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
 
   //crashlytics
@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
       // locale: const Locale('zh', 'Pk'),
       translations: Languages(), // This provides the translations
       fallbackLocale: const Locale('en', 'US'), // This sets the fallback locale
-      title: "AI Grammer Club",
+      title: "Ai Grammer Checker",
       debugShowCheckedModeBanner: false,
       useInheritedMediaQuery: true,
       builder: (context, child) {
@@ -111,7 +111,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: initScreen == 0 || initScreen == null ? "onboard" : "home",
       routes: {
-        "home": (context) => const BottomNavBarScreen(),
+        "home": (context) => const SplashScreen(),
         "onboard": (context) => OnboardingScreen(),
       },
     );

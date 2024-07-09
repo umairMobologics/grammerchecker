@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
 // Import the sin and pi functions from the math library with the name "math"
 import 'dart:math' as math show sin, pi;
 
-// Import the Animation class from the flutter/animation library
-import 'package:flutter/animation.dart';
+import 'package:flutter/material.dart';
+
 
 class WidgetDotGrow extends StatefulWidget {
   const WidgetDotGrow({

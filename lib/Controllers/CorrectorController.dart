@@ -71,6 +71,7 @@ Here is the text in which you have to apply these rules:
      outputText.value ='';
       isresultLoaded.value=false;
           isListening.value=false;
+          charCount.value=0;
           speech.stop();
   }
   late stt.SpeechToText speech;

@@ -78,6 +78,7 @@ Future<String> sendQuery(BuildContext context) async {
      outputText.value ='';
       isresultLoaded.value=false;
       isListening.value=false;
+        charCount.value=0;
       speech.stop();
   }
 

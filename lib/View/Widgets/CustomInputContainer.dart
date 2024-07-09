@@ -107,6 +107,7 @@ class _CustomInputContainerState extends State<CustomInputContainer> {
                             //             widget.textController.text.value.text.length),
                             //   ),
                             // ),
+                            
                             onSubmitted: (value) {
                               !widget.textController.isloading.value
                                   ? () {

@@ -206,10 +206,7 @@ class _HomepageState extends State<Homepage> {
                         
                       ],
                     ),
-//                 TextButton(
-//     onPressed: () => throw Exception(),
-//     child: const Text("Throw Test Exception"),
-// ),
+          
                   ],
                 ),
               ),
@@ -227,6 +224,7 @@ class _HomepageState extends State<Homepage> {
     );
   }
 }
+
 
 class featureCard extends StatelessWidget {
   const featureCard({

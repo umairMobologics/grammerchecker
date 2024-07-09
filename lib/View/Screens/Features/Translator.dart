@@ -283,31 +283,34 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
                   ),
                 ),
                 SizedBox(height: mq.height * 0.02),
-                Obx(
-                  () => CustomButton(
-                      mq: mq,
-                      ontap: !textController.isloading.value
-                          ? () {
-                             if(textController.controller.value.text.isNotEmpty)
-                        {
-                            InterstitialAdClass.count += 1;
-                    if (InterstitialAdClass.count ==
-                        InterstitialAdClass.totalLimit) {
+                 Obx(
+                    () => CustomButton(
+                        mq: mq,
+                        ontap: !textController.isloading.value
+                            ? () {
+                                if (textController
+                                    .controller.value.text.isNotEmpty) {
+                                  InterstitialAdClass.count += 1;
+                                  if (InterstitialAdClass.count ==
+                                      InterstitialAdClass.totalLimit) {
+                                    InterstitialAdClass.showInterstitialAd(
+                                        context);
+                                  }
 
-                      InterstitialAdClass.showInterstitialAd(context);
-                    }
-                        }
-                              log("hit");
-                              textController.translateText(
-                                context,
-                                textController.sourceLanguageCode.value,
-                                textController.targetLanguageCode.value,
-                              );
-                               showLoadingDialog(context,mq);
-                            }
-                          : () {},
-                      text:  buttontext(mq)),
-                ),
+                                  log("hit");
+                                  textController.translateText(
+                                    context,
+                                    textController.sourceLanguageCode.value,
+                                    textController.targetLanguageCode.value,
+                                  );
+                                  showLoadingDialog(context, mq);
+                                } else {
+                                  showToast(context , 'empty'.tr );
+                                }
+                              }
+                            : () {},
+                        text: buttontext(mq)),
+                  ),
                 SizedBox(height: mq.height * 0.02),
                 Obx(() => textController.isresultLoaded.value
                     ? CustomOutputContainer(

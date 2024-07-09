@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -20,51 +19,17 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-         BannerAd? _anchoredAdaptiveAd;
-  bool isLoaded = false;
+        var ads = Get.put(AdController());
+  BannerAd? _anchoredAdaptiveAd;
 
-  Future<void> _loadAd() async {
-    // Get an AnchoredAdaptiveBannerAdSize before loading the ad.
-    final AnchoredAdaptiveBannerAdSize? size =
-        await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-            MediaQuery.of(context).size.width.truncate());
-
-    if (size == null) {
-      log('Unable to get height of anchored banner.');
-      return;
-    }
-
-    _anchoredAdaptiveAd = BannerAd(
-      // TODO: replace these test ad units with your own ad unit.
-      adUnitId: AdHelper.bannerAd,
-      size: size,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (Ad ad) {
-          // log('$ad loaded: ');
-          setState(() {
-            // When the ad is loaded, get the ad size and use it to set
-            // the height of the ad container.
-            _anchoredAdaptiveAd = ad as BannerAd;
-            isLoaded = true;
-          });
-        },
-
-        onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          // log('Anchored adaptive banner failedToLoad: $error');
-          ad.dispose();
-        },
-      ),
-    );
-    return _anchoredAdaptiveAd!.load();
-  }
 
   var animation = Get.put(
     SplashAnimation());
     @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async{
     super.didChangeDependencies();
-    _loadAd();
+   ads.isLoaded.value = false;
+    _anchoredAdaptiveAd = await ads.loadAd(context);
   }
   @override
   void initState() {
@@ -93,7 +58,10 @@ animation.controller.repeat();
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    _anchoredAdaptiveAd!.dispose();
+
+      _anchoredAdaptiveAd!.dispose();
+      _anchoredAdaptiveAd = null;
+
   }
   @override
   Widget build(BuildContext context) {
@@ -167,20 +135,26 @@ animation.controller.repeat();
           )
         ],
       ),
-      bottomNavigationBar: _anchoredAdaptiveAd != null && isLoaded && InterstitialAdClass.count !=
-    InterstitialAdClass.totalLimit ?
-  Container(
-    decoration: BoxDecoration(
-      // color: Colors.green,
-      border: Border.all(
-        color: Colors.deepPurpleAccent,
-        width:0,
-      )
-    ),
-    width: _anchoredAdaptiveAd!.size.width.toDouble(),
-    height: _anchoredAdaptiveAd!.size.height.toDouble(),
-    child: AdWidget(ad: _anchoredAdaptiveAd!),
-  ) : null
+     
+   bottomNavigationBar: Obx(
+          () => ads.isLoaded.value &&
+                  !InterstitialAdClass.isInterAddLoaded.value &&
+                   
+                  _anchoredAdaptiveAd != null
+              ? Container(
+                  decoration: BoxDecoration(
+                      // color: Colors.green,
+                      border: Border.all(
+                    color: Colors.deepPurpleAccent,
+                    width: 0,
+                  )),
+                  width: _anchoredAdaptiveAd!.size.width.toDouble(),
+                  height: _anchoredAdaptiveAd!.size.height.toDouble(),
+                  child: AdWidget(ad: _anchoredAdaptiveAd!),
+                )
+              : const SizedBox(),
+        )
+
     
     );
   }

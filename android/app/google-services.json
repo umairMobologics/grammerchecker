@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:441361950177:android:ae6345285c97996a755ea0",
+        "mobilesdk_app_id": "1:441361950177:android:34e055aa8fe367ea755ea0",
         "android_client_info": {
-          "package_name": "com.example.grammer_checker_app"
+          "package_name": "com.aigrammarchecker.aiwritingassistanttranslator"
         }
       },
       "oauth_client": [],

@@ -19,6 +19,7 @@ import 'package:grammer_checker_app/utils/PickImage_gallery_camera.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/customTextStyle.dart';
 import 'package:grammer_checker_app/utils/permissiionHandler.dart';
+import 'package:grammer_checker_app/utils/snackbar.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class CorrectorScreen extends StatefulWidget {
@@ -227,7 +228,7 @@ final TTSController ttsController = Get.put(TTSController());
                   ),
                 ),
                  SizedBox(height: mq.height * 0.02),
-                 Obx(
+               Obx(
                   () => CustomButton(
                       mq: mq,
                       ontap: !textController.isloading.value ? () {
@@ -239,12 +240,17 @@ final TTSController ttsController = Get.put(TTSController());
 
                       InterstitialAdClass.showInterstitialAd(context);
                     }
-                        }
+
                           
                             isSelectable.value=false;
                         log("hit");
                         textController.sendQuery(context);
-                         showLoadingDialog(context,mq);
+
+                          showLoadingDialog(context,mq);
+                        }
+                        else {
+                          showToast(context , 'empty'.tr );
+                        }
                       } : (){},
                       text: buttontext(mq)),
                 ),

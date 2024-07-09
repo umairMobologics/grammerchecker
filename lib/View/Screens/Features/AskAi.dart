@@ -245,30 +245,35 @@ void disposeAd() {
               
               SizedBox(height: mq.height * 0.02),
               Obx(
-                () => CustomButton(
-                    mq: mq,
-                    ontap: !textController.isloading.value
-                        ? () {
-                        //  log("${textController.controller.value.text.length}");
-                        //    log(textController.controller.value.text);
-                             if(textController.controller.value.text.isNotEmpty)
-                      {
-                          InterstitialAdClass.count += 1;
-                  if (InterstitialAdClass.count ==
-                      InterstitialAdClass.totalLimit) {
-      
-                    InterstitialAdClass.showInterstitialAd(context);
-                  }
-                      }
-                              isSelectable.value=false;
-                            log("hit");
-                            textController.sendQuery(context);
-                             showLoadingDialog(context,mq);
-                          
-                          }
-                        : () {},
-                    text:  buttontext(mq)),
-              ),
+                  () => CustomButton(
+                      mq: mq,
+                      ontap: !textController.isloading.value
+                          ? () {
+                              //  log("${textController.controller.value.text.length}");
+                              //    log(textController.controller.value.text);
+                              if (textController
+                                  .controller.value.text.isNotEmpty) {
+                                InterstitialAdClass.count += 1;
+                                if (InterstitialAdClass.count ==
+                                    InterstitialAdClass.totalLimit) {
+                                  InterstitialAdClass.showInterstitialAd(
+                                      context);
+                                }
+
+                                isSelectable.value = false;
+                                log("hit");
+                                textController.sendQuery(context);
+                                if (textController
+                                    .controller.value.text.isNotEmpty) {
+                                  showLoadingDialog(context, mq);
+                                }
+                              } else {
+                                showToast(context , 'empty'.tr );
+                              }
+                            }
+                          : () {},
+                      text: buttontext(mq)),
+                ),
               SizedBox(height: mq.height * 0.02),
               Obx(
                 () => textController.isresultLoaded.value
