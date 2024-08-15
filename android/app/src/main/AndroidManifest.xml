@@ -19,7 +19,7 @@
   </intent>
 </queries>
     <application 
-        android:label="Ai Grammer Checker"
+        android:label="Ai Grammar Checker"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity
@@ -54,7 +54,7 @@
             android:value="2" />
          <meta-data
         android:name="com.google.android.gms.ads.APPLICATION_ID"
-        android:value="ca-app-pub-2867991109567972~7981190813"/>
+        android:value="ca-app-pub-9800935656438737~9846285290"/>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility?hl=en and

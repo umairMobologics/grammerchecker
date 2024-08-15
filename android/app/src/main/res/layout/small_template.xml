@@ -57,7 +57,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
                     android:gravity="center"
                     android:layout_centerVertical="true"
                     android:text="Ad"
-                    android:textColor="@color/gnt_ad_green"
+                    android:textColor="@color/gnt_blue"
                     android:textSize="@dimen/gnt_ad_indicator_text_size"
                     android:textStyle="bold"></TextView>
 

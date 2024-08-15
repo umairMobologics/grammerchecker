@@ -1,9 +1,9 @@
-package com.aigrammarchecker.aiwritingassistanttranslator;
+package com.ai_grammarcheckker_grammarcorrector_articlewriterai;
 import com.google.android.gms.ads.VideoController;
 import com.google.android.gms.ads.nativead.MediaView;
 import com.google.android.gms.ads.nativead.NativeAd;
 import com.google.android.gms.ads.nativead.NativeAdView;
-import com.aigrammarchecker.aiwritingassistanttranslator.R;
+import com.ai_grammarcheckker_grammarcorrector_articlewriterai.R;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

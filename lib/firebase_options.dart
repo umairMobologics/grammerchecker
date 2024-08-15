@@ -26,9 +26,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -47,28 +53,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCsqnUZOYEQFFeyMex2SdXmz6sLS2FAdmY',
-    appId: '1:441361950177:android:ae6345285c97996a755ea0',
-    messagingSenderId: '441361950177',
-    projectId: 'grammerchecker-a9837',
-    storageBucket: 'grammerchecker-a9837.appspot.com',
+    apiKey: 'AIzaSyAjD72lhUrp4G8aNbjgG0y3ZB1_rrVw0xg',
+    appId: '1:915775419800:android:964c2ddbffd976b62067ed',
+    messagingSenderId: '915775419800',
+    projectId: 'ai-grammar-checker---android',
+    storageBucket: 'ai-grammar-checker---android.appspot.com',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCwml70I-FbBjW9HKhXlFQEFOtMmDBYHGM',
-    appId: '1:441361950177:ios:a92427ab2bbd43df755ea0',
-    messagingSenderId: '441361950177',
-    projectId: 'grammerchecker-a9837',
-    storageBucket: 'grammerchecker-a9837.appspot.com',
-    iosBundleId: 'com.example.grammerCheckerApp',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCwml70I-FbBjW9HKhXlFQEFOtMmDBYHGM',
-    appId: '1:441361950177:ios:a92427ab2bbd43df755ea0',
-    messagingSenderId: '441361950177',
-    projectId: 'grammerchecker-a9837',
-    storageBucket: 'grammerchecker-a9837.appspot.com',
-    iosBundleId: 'com.example.grammerCheckerApp',
-  );
 }

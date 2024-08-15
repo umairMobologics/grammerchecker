@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "441361950177",
-    "project_id": "grammerchecker-a9837",
-    "storage_bucket": "grammerchecker-a9837.appspot.com"
+    "project_number": "915775419800",
+    "project_id": "ai-grammar-checker---android",
+    "storage_bucket": "ai-grammar-checker---android.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:441361950177:android:34e055aa8fe367ea755ea0",
+        "mobilesdk_app_id": "1:915775419800:android:2b6163ce179e1bdf2067ed",
         "android_client_info": {
-          "package_name": "com.aigrammarchecker.aiwritingassistanttranslator"
+          "package_name": "com.ai_grammarcheckker_grammarcorrector_articlewriterai"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCsqnUZOYEQFFeyMex2SdXmz6sLS2FAdmY"
+          "current_key": "AIzaSyAjD72lhUrp4G8aNbjgG0y3ZB1_rrVw0xg"
         }
       ],
       "services": {

@@ -1,18 +1,17 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:grammer_checker_app/API/Api_Key.dart';
+import 'package:grammer_checker_app/Helper/RemoteConfig/remoteConfigs.dart';
 import 'package:grammer_checker_app/utils/snackbar.dart';
 import 'package:http/http.dart' as http;
 
 class APIs {
- 
   static Future<String> makeGeminiRequest(String promt) async {
-   
-    String apiUrl =
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey';
-
+    String apiUrl = RemoteConfig.apiUrl + apiKey;
+    log("final api key $apiUrl");
     // Replace the following JSON with your actual request payload
     Map<String, dynamic> requestBody = {
       "contents": [
@@ -47,20 +46,36 @@ class APIs {
             var generatedContent = content['parts'][0]['text'];
             return (generatedContent);
           } else {
+            log("incrrect output");
+            CustomSnackbar.showSnackbar(
+                "Something went wrong, please try again", SnackPosition.TOP);
             return ('');
           }
         } else {
+          log("invalidresponse");
+          CustomSnackbar.showSnackbar(
+              "Something went wrong, please try again", SnackPosition.TOP);
           return ('');
         }
       } else {
         // Handle error
         // print('Response: ${response.body}');
+        CustomSnackbar.showSnackbar(
+            "Something went wrong, please try again", SnackPosition.TOP);
         return ('');
       }
+    } on SocketException catch (e) {
+      log("plantform exception $e");
+      CustomSnackbar.showSnackbar(
+          "Make sure your device is connected with internet",
+          SnackPosition.TOP);
+      return ('');
     } catch (e) {
       // Handle exceptions
       log("$e");
-      CustomSnackbar.showSnackbar("Something went wrong, please try again!" , SnackPosition.BOTTOM );
+      CustomSnackbar.showSnackbar(
+          "we could not response to this query.It may contain harmful words",
+          SnackPosition.BOTTOM);
       return ('');
     }
   }

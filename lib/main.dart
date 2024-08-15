@@ -1,18 +1,26 @@
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:grammer_checker_app/Controllers/InAppPurchases/inappPurchaseController.dart';
+import 'package:grammer_checker_app/Helper/RemoteConfig/remoteConfigs.dart';
+import 'package:grammer_checker_app/Helper/checkInternetConnectivity.dart';
 import 'package:grammer_checker_app/Localization/Languages.dart';
 import 'package:grammer_checker_app/View/Screens/Onboarding/OnboardingScreen.dart';
 import 'package:grammer_checker_app/View/Screens/SplashScreen.dart';
 import 'package:grammer_checker_app/firebase_options.dart';
+
+// import 'package:grammer_checker_app/firebase_options.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/customTextStyle.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<Locale?> getSavedLocale() async {
@@ -25,6 +33,11 @@ Future<Locale?> getSavedLocale() async {
   }
   return null;
 }
+
+final liveInternet = Get.put(NetworkController(), permanent: true);
+InAppPurchaseController Subscriptioncontroller =
+    Get.put(InAppPurchaseController(InAppPurchase.instance), permanent: true)
+      ..initialize();
 
 // import 'package:shared_preferences/shared_preferences.dart';
 int? initScreen;
@@ -41,8 +54,16 @@ Future main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   MobileAds.instance.initialize();
+  await Subscriptioncontroller.restorePurchases();
 
 //crashlytics and analytics
+
+  //remote configurations
+  try {
+    RemoteConfig.initConfig();
+  } catch (e) {
+    log("got some error");
+  }
   //analytics
   FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
 
@@ -65,26 +86,44 @@ Future main() async {
     // builder: (context) =>  MyApp(savedLocale: savedLocale)),
     // ); // Wrap your app
 
-    runApp(MyApp(
-      savedLocale: savedLocale,
-    ));
+    runApp(
+      MyApp(
+        savedLocale: savedLocale,
+      ), // Wrap your app
+    );
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final Locale? savedLocale;
   const MyApp({super.key, this.savedLocale});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    @override
+    void initState() {
+      super.initState();
+      DependencyInjection.init();
+    }
+  }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      locale: savedLocale ?? Get.deviceLocale,
+      locale: widget.savedLocale ?? Get.deviceLocale,
 
       // locale: const Locale('zh', 'Pk'),
       translations: Languages(), // This provides the translations
       fallbackLocale: const Locale('en', 'US'), // This sets the fallback locale
-      title: "Ai Grammer Checker",
+      title: "Ai Grammar Checker",
       debugShowCheckedModeBanner: false,
       useInheritedMediaQuery: true,
       builder: (context, child) {

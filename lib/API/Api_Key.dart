@@ -1,1 +1,4 @@
-const String apiKey = 'AIzaSyD_dnX9pgySDJaPPmFXY6tgIwyHIdabj90'; //for grammer app 
+import 'package:grammer_checker_app/Helper/RemoteConfig/remoteConfigs.dart';
+
+final String apiKey = RemoteConfig.apiKey; //for image+description
+ //for grammer app 

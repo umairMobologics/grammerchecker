@@ -4,9 +4,6 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:grammer_checker_app/AdsHelper/AdHelper.dart';
-import 'package:grammer_checker_app/AdsHelper/AppOpenAdManager.dart';
 import 'package:grammer_checker_app/Controllers/CorrectorController.dart';
 import 'package:grammer_checker_app/Controllers/TTS_Controller.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
@@ -25,57 +22,13 @@ class CorrectorDetails extends StatefulWidget {
 }
 
 class _CorrectorDetailsState extends State<CorrectorDetails> {
-  final ScrollController _scrollController = ScrollController();
   final CorrectorController textController = Get.put(CorrectorController());
 
   final TTSController ttsController = Get.put(TTSController());
-   var ads = Get.put(AdController());
-      NativeAd? nativeAd3;
-      
-
-  @override
-  void initState() {
-    super.initState();
-    // Listen for changes in isresultLoaded
-     WidgetsBinding.instance.addPostFrameCallback((_) {
-           if (InterstitialAdClass.interstitialAd == null) {
-      InterstitialAdClass.createInterstitialAd();
-    }
-          ads.isAdLoaded.value = false;
-    nativeAd3 ??= ads.loadNativeAd();
-
-        
-        },);
-    textController.isresultLoaded.listen((isLoaded) {
-      if (isLoaded) {
-        // Scroll to the bottom after the first frame is built
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_scrollController.hasClients) {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOut,
-            );
-          }
-        });
-      }
-    });
-  }
-
-void disposeAd() {
-    nativeAd3?.dispose();
-    nativeAd3 = null;
-    // ads.isAdLoaded.value = false;
-    log(" native ad dispose");
-  }
   @override
   void dispose() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      disposeAd();
-      textController.cleardata();
       ttsController.stop();
-     
-      _scrollController.dispose(); // Dispose the ScrollController
     });
 
     super.dispose();
@@ -129,8 +82,6 @@ void disposeAd() {
                         "assets/Icons/cross.svg",
                         height: mq.height * 0.040,
                       ),
-                    
-
                       style: customTextStyle(fontSize: mq.height * 0.020),
                       text: textController.parseAndStyleText(
                           widget.mistaletext, Colors.red, Colors.black),
@@ -144,9 +95,11 @@ void disposeAd() {
                         "assets/Icons/true.svg",
                         height: mq.height * 0.040,
                       ),
-                      onCopyPressed: () {  textController.outputText.value.isNotEmpty ?
-                       copyToClipboard(context, textController.outputText.value) : log("message");
-
+                      onCopyPressed: () {
+                        textController.outputText.value.isNotEmpty
+                            ? copyToClipboard(
+                                context, textController.outputText.value)
+                            : log("message");
                       },
                       onSpeakPressed: () {
                         if (widget.correctedText.isNotEmpty) {
@@ -169,16 +122,6 @@ void disposeAd() {
               : const SizedBox(),
         ),
       ),
-       bottomNavigationBar: Obx(
-        () =>  !textController.isresultLoaded.value
-                    ? ads.isAdLoaded.value && nativeAd3 != null &&  !InterstitialAdClass.isInterAddLoaded.value && !AppOpenAdManager.isOpenAdLoaded.value
-            ? SizedBox(
-              
-               height: 150,
-               width: double.infinity,
-                child: AdWidget(ad: nativeAd3!))
-            : const SizedBox() : const SizedBox()
-      )
     );
   }
 }
@@ -224,15 +167,12 @@ class CustomContainerBox extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child:  SizedBox(
-                    height: mq.height * 0.28, // Constrain the height to allow scrolling
+                  child: SizedBox(
+                    height: mq.height *
+                        0.28, // Constrain the height to allow scrolling
                     child: SingleChildScrollView(
                       child: SelectableText.rich(
-                        textAlign: TextAlign.justify,
-                        style: style,
-                         text
-                        
-                      ),
+                          textAlign: TextAlign.justify, style: style, text),
                     ),
                   ),
                 ),
@@ -251,41 +191,38 @@ class CustomContainerBox extends StatelessWidget {
                     onSpeakPressed != null
                         ? Obx(
                             () => InkWell(
-                              onTap: onSpeakPressed,
-                              child: ttsController.isSpeaking.value
-                                      ? AvatarGlow(
-                                          glowColor: mainClr,
-                                          glowRadiusFactor: 0.3,
-                                          duration: const Duration(
-                                              milliseconds: 2000),
-                                          repeat: true,
-                                          child: SvgPicture.asset(
-                                            "assets/Icons/speak.svg",
-                                            height: mq.height * 0.040,
-                                          ),
-                                        )
-                                      : SvgPicture.asset(
+                                onTap: onSpeakPressed,
+                                child: ttsController.isSpeaking.value
+                                    ? AvatarGlow(
+                                        glowColor: mainClr,
+                                        glowRadiusFactor: 0.3,
+                                        duration:
+                                            const Duration(milliseconds: 2000),
+                                        repeat: true,
+                                        child: SvgPicture.asset(
                                           "assets/Icons/speak.svg",
                                           height: mq.height * 0.040,
-                                        )
-                                 
-                            ),
+                                        ),
+                                      )
+                                    : SvgPicture.asset(
+                                        "assets/Icons/speak.svg",
+                                        height: mq.height * 0.040,
+                                      )),
                           )
                         : const SizedBox(),
                     SizedBox(width: mq.width * 0.04),
                     onSpeakPressed != null
-                        ? Obx(() =>  ttsController.isSpeaking.value
-                                ? InkWell(
-                                    onTap: () {
-                                      ttsController.stop();
-                                    },
-                                    child: Icon(
-                                      Icons.stop,
-                                      color: red,
-                                      size: mq.height * 0.030,
-                                    ))
-                                : const SizedBox()
-                        )
+                        ? Obx(() => ttsController.isSpeaking.value
+                            ? InkWell(
+                                onTap: () {
+                                  ttsController.stop();
+                                },
+                                child: Icon(
+                                  Icons.stop,
+                                  color: red,
+                                  size: mq.height * 0.030,
+                                ))
+                            : const SizedBox())
                         : const SizedBox()
                   ],
                 ),

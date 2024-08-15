@@ -7,6 +7,8 @@ import 'package:grammer_checker_app/main.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/customTextStyle.dart';
 
+final FocusNode focusNode = FocusNode();
+
 class CustomInputContainer extends StatefulWidget {
   final VoidCallback? onGalleryPressed;
   final VoidCallback? onCameraPressed;
@@ -34,13 +36,6 @@ class CustomInputContainer extends StatefulWidget {
 
 class _CustomInputContainerState extends State<CustomInputContainer> {
   final TextEditingController controller = TextEditingController();
-  final FocusNode focusNode = FocusNode();
-
-  @override
-  void dispose() {
-    focusNode.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,33 +65,31 @@ class _CustomInputContainerState extends State<CustomInputContainer> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Obx(() => Expanded(
-                child: Stack(
+                    child: Stack(
                       alignment: Alignment.topLeft,
                       children: [
                         Padding(
-                          padding: widget
-                                  .textController.charCount.value >0
+                          padding: widget.textController.charCount.value > 0
                               ? const EdgeInsets.only(top: 15)
                               : const EdgeInsets.all(0),
                           child: TextField(
                             focusNode: focusNode,
                             maxLines: 8,
                             minLines: 1,
-                        
+
                             // onSubmitted: textController.updateText,
                             onChanged: (value) {
                               // widget.textController.updateText(value);
-                              if(value.length > 1000)
-                              {
-                                 widget.textController.controller.value.text =
-                                      value.substring(0, 1000);
+                              if (value.length > 1000) {
+                                widget.textController.controller.value.text =
+                                    value.substring(0, 1000);
                               }
-                                       
-                        
+
                               value.length < 1000
                                   ? widget.textController.charCount.value =
                                       value.length
-                                  : widget.textController.charCount.value = 1000;
+                                  : widget.textController.charCount.value =
+                                      1000;
                             },
                             controller: widget.textController.controller.value,
                             // TextEditingController.fromValue(
@@ -107,7 +100,7 @@ class _CustomInputContainerState extends State<CustomInputContainer> {
                             //             widget.textController.text.value.text.length),
                             //   ),
                             // ),
-                            
+
                             onSubmitted: (value) {
                               !widget.textController.isloading.value
                                   ? () {
@@ -116,13 +109,15 @@ class _CustomInputContainerState extends State<CustomInputContainer> {
                                   : () {};
                             },
                             decoration: InputDecoration(
-                              hintText:  widget.hintText.tr,
+                              hintText: widget.hintText.tr,
                               border: InputBorder.none,
                             ),
                           ),
                         ),
                         Obx(
-                          () => widget.textController.controller.value.text.length > 0
+                          () => widget.textController.controller.value.text
+                                      .length >
+                                  0
                               ? Positioned(
                                   top: 0,
                                   right: 0,
@@ -140,8 +135,7 @@ class _CustomInputContainerState extends State<CustomInputContainer> {
                         ),
                       ],
                     ),
-              )),
-       
+                  )),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -231,7 +225,7 @@ class CustomOutputContainer extends StatefulWidget {
       this.onSpeak,
       this.onCopy});
   // ignore: prefer_typing_uninitialized_variables
-  final  textController;
+  final textController;
   // ignore: prefer_typing_uninitialized_variables
   final ttsController;
   final VoidCallback? onSpeak;
@@ -250,7 +244,6 @@ class _CustomOutputContainerState extends State<CustomOutputContainer> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     var mq = MediaQuery.of(context).size;
@@ -266,7 +259,7 @@ class _CustomOutputContainerState extends State<CustomOutputContainer> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(15),
           border: Border.all(color: mainClr),
-                ),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -10,10 +10,11 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 // // Real Ids
 // // Real Ids
 // // Real Ids
+
 class AdHelper {
   static String get interstitialAd {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-2867991109567972/9831859928';
+      return 'ca-app-pub-9800935656438737/4892104414';
     } else if (Platform.isIOS) {
       return '';
     }
@@ -22,7 +23,7 @@ class AdHelper {
 
   static String get nativeAd {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-2867991109567972/6449651131';
+      return 'ca-app-pub-9800935656438737/9589897329';
     } else if (Platform.isIOS) {
       return '';
     }
@@ -31,7 +32,7 @@ class AdHelper {
 
   static String get openAppAd {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-2867991109567972/4041945804';
+      return 'ca-app-pub-9800935656438737/8533203626';
     } else if (Platform.isIOS) {
       return '';
     }
@@ -40,31 +41,40 @@ class AdHelper {
 
   static String get bannerAd {
     if (Platform.isAndroid) {
-      return 'ca-app-pub-2867991109567972/7762732809';
+      return 'ca-app-pub-9800935656438737/2836618845';
     } else if (Platform.isIOS) {
       return '';
     }
     throw UnsupportedError("Unsupported platform");
   }
 
-  // static String get rewardedAd {
-  //   if (Platform.isAndroid) {
-  //     return 'ca-app-pub-9800935656438737/9316112699';
-  //   }
-  //   // else if (Platform.isIOS) {
-  //   //   return 'ca-app-pub-3940256099942544/1712485313';
-  //   // }
-  //   throw UnsupportedError("Unsupported platform");
-  // }
+// static String get rewardedAd {
+//   if (Platform.isAndroid) {
+//     return 'ca-app-pub-9800935656438737/9316112699';
+//   }
+//   // else if (Platform.isIOS) {
+//   //   return 'ca-app-pub-3940256099942544/1712485313';
+//   // }
+//   throw UnsupportedError("Unsupported platform");
+// }
 }
 
 //Test IDS
 //Test IDS
 //Test IDS
 //Test IDS
-//Test IDS
+// Test IDS
 
 // class AdHelper {
+//   static String get CollapsableBanner {
+//     if (Platform.isAndroid) {
+//       return 'ca-app-pub-3940256099942544/2014213617';
+//     } else if (Platform.isIOS) {
+//       return 'ca-app-pub-3940256099942544/2014213617';
+//     }
+//     throw UnsupportedError("Unsupported platform");
+//   }
+
 //   static String get interstitialAd {
 //     if (Platform.isAndroid) {
 //       return 'ca-app-pub-3940256099942544/1033173712';
@@ -150,6 +160,31 @@ class AdController extends GetxController {
       }),
       request: const AdRequest(),
     )..load();
+  }
+
+  RxBool isLargeAdLoaded = false.obs;
+  //native add
+  NativeAd? loadNativeAdlarge() {
+    try {
+      return NativeAd(
+        factoryId: "listTile",
+        adUnitId: AdHelper.nativeAd,
+        listener: NativeAdListener(onAdLoaded: (ad) {
+          isLargeAdLoaded.value = true;
+          log("native ad is loaded");
+          // Callback to notify the ad is loaded
+        }, onAdFailedToLoad: (ad, error) {
+          log('$NativeAd failed to load: $error');
+          ad.dispose();
+        }),
+        request: const AdRequest(),
+      )..load();
+    } catch (e) {
+      log("ad is not loaded cathc");
+      isLargeAdLoaded.value = false;
+
+      return null;
+    }
   }
   // NativeAd? loadNativeAd() {
   //   return NativeAd(
