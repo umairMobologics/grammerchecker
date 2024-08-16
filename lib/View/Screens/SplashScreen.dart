@@ -8,6 +8,7 @@ import 'package:grammer_checker_app/Controllers/SplashAnimation.dart';
 import 'package:grammer_checker_app/Helper/AdsHelper/AdHelper.dart';
 import 'package:grammer_checker_app/View/Screens/BottomNav/BottomNavScreen.dart';
 import 'package:grammer_checker_app/View/Screens/InAppSubscription/PremiumFeatureScreen.dart';
+import 'package:grammer_checker_app/View/Screens/Onboarding/OnboardingScreen.dart';
 import 'package:grammer_checker_app/main.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/customTextStyle.dart';
@@ -122,19 +123,23 @@ class _SplashScreenState extends State<SplashScreen>
                                         isSplash: true,
                                       ));
                                 } else {
-                                  Get.to(() => const BottomNavBarScreen());
+                                  if (initScreen == 0 || initScreen == null) {
+                                    Get.to(() => OnboardingScreen());
+                                  } else {
+                                    Get.off(() => const BottomNavBarScreen());
+                                  }
                                 }
                               },
                               child: Material(
                                 elevation: 15,
                                 borderRadius: BorderRadius.circular(20),
                                 child: Container(
-                                  width: mq.width * 0.6,
+                                  width: mq.width * 0.8,
                                   padding: EdgeInsets.symmetric(
                                       horizontal: mq.width * 0.10,
                                       vertical: mq.height * 0.015),
                                   decoration: BoxDecoration(
-                                      color: mainClr,
+                                      color: Color.fromARGB(255, 108, 182, 243),
                                       borderRadius: BorderRadius.circular(20)),
                                   child: Center(
                                       child: Text(

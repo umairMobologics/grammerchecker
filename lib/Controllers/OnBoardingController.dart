@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:grammer_checker_app/View/Screens/SplashScreen.dart';
-
+import 'package:grammer_checker_app/View/Screens/BottomNav/BottomNavScreen.dart';
 
 class OnboardingController extends GetxController {
   var currentPage = 0.obs;
@@ -12,7 +11,7 @@ class OnboardingController extends GetxController {
     isLastPage.value = index == pageCount - 1;
   }
 
-  void nextPage(PageController controller,int pageCount) {
+  void nextPage(PageController controller, int pageCount) {
     if (currentPage.value < pageCount - 1) {
       controller.nextPage(
         duration: const Duration(milliseconds: 500),
@@ -22,6 +21,6 @@ class OnboardingController extends GetxController {
   }
 
   void goToHome() {
-    Get.to(() => SplashScreen());
+    Get.off(() => BottomNavBarScreen());
   }
 }

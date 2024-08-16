@@ -13,7 +13,6 @@ import 'package:grammer_checker_app/Controllers/InAppPurchases/inappPurchaseCont
 import 'package:grammer_checker_app/Helper/RemoteConfig/remoteConfigs.dart';
 import 'package:grammer_checker_app/Helper/checkInternetConnectivity.dart';
 import 'package:grammer_checker_app/Localization/Languages.dart';
-import 'package:grammer_checker_app/View/Screens/Onboarding/OnboardingScreen.dart';
 import 'package:grammer_checker_app/View/Screens/SplashScreen.dart';
 import 'package:grammer_checker_app/firebase_options.dart';
 // import 'package:grammer_checker_app/firebase_options.dart';
@@ -117,42 +116,43 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      locale: widget.savedLocale ?? Get.deviceLocale,
+        locale: widget.savedLocale ?? Get.deviceLocale,
 
-      // locale: const Locale('zh', 'Pk'),
-      translations: Languages(), // This provides the translations
-      fallbackLocale: const Locale('en', 'US'), // This sets the fallback locale
-      title: "Ai Grammar Checker",
-      debugShowCheckedModeBanner: false,
-      useInheritedMediaQuery: true,
-      builder: (context, child) {
-        return MediaQuery(
-          data: MediaQuery.of(context)
-              .copyWith(textScaler: const TextScaler.linear(0.82)),
-          child: child!,
-        );
-      },
-      theme: ThemeData(
-        useMaterial3: true,
-        appBarTheme: AppBarTheme(
-            // centerTitle: true,
-            backgroundColor: mainClr,
-            iconTheme: const IconThemeData(color: white),
-            // backgroundColor: white,
+        // locale: const Locale('zh', 'Pk'),
+        translations: Languages(), // This provides the translations
+        fallbackLocale:
+            const Locale('en', 'US'), // This sets the fallback locale
+        title: "Ai Grammar Checker",
+        debugShowCheckedModeBanner: false,
+        useInheritedMediaQuery: true,
+        builder: (context, child) {
+          return MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(0.82)),
+            child: child!,
+          );
+        },
+        theme: ThemeData(
+          useMaterial3: true,
+          appBarTheme: AppBarTheme(
+              // centerTitle: true,
+              backgroundColor: mainClr,
+              iconTheme: const IconThemeData(color: white),
+              // backgroundColor: white,
 
-            elevation: 2,
-            titleTextStyle: customTextStyle(
-              color: white,
-              fontSize: MediaQuery.of(context).size.height * 0.030,
-              fontWeight: FontWeight.w500,
-            )),
-      ),
-      initialRoute: initScreen == 0 || initScreen == null ? "onboard" : "home",
-      routes: {
-        "home": (context) => const SplashScreen(),
-        "onboard": (context) => OnboardingScreen(),
-      },
-    );
-    // home:  const SplashScreen());
+              elevation: 2,
+              titleTextStyle: customTextStyle(
+                color: white,
+                fontSize: MediaQuery.of(context).size.height * 0.030,
+                fontWeight: FontWeight.w500,
+              )),
+        ),
+        //   initialRoute: initScreen == 0 || initScreen == null ? "onboard" : "home",
+        //   routes: {
+        //     "home": (context) => const SplashScreen(),
+        //     "onboard": (context) => OnboardingScreen(),
+        //   },
+        // );
+        home: const SplashScreen());
   }
 }
