@@ -16,7 +16,6 @@ import 'package:grammer_checker_app/Localization/Languages.dart';
 import 'package:grammer_checker_app/View/Screens/Onboarding/OnboardingScreen.dart';
 import 'package:grammer_checker_app/View/Screens/SplashScreen.dart';
 import 'package:grammer_checker_app/firebase_options.dart';
-
 // import 'package:grammer_checker_app/firebase_options.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/customTextStyle.dart';

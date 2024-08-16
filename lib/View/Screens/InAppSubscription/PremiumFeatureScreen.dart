@@ -11,6 +11,7 @@ import 'package:grammer_checker_app/View/Screens/InAppSubscription/SubscriptionI
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/snackbar.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PremiumScreen extends StatefulWidget {
   final bool isSplash;
@@ -329,11 +330,11 @@ class Instruction extends StatelessWidget {
 }
 
 void _launchURL(Uri url) async {
-  // if (await canLaunchUrl(url)) {
-  //   await launchUrl(url);
-  // } else {
-  //   throw 'Could not launch $url';
-  // }
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url);
+  } else {
+    throw 'Could not launch $url';
+  }
 }
 
 class FeatureCard extends StatelessWidget {
