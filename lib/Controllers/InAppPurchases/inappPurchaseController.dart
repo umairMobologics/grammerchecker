@@ -51,9 +51,9 @@ class InAppPurchaseController extends GetxController {
       productDetailsList.clear(); // Clear the previous list
       for (var product in response.productDetails) {
         productDetailsList.add(product);
-        premiumC.changeSelectedPlan(productDetailsList[0].id);
-        log("initial plan selected **** ${selectedPlan.value}");
       }
+      premiumC.changeSelectedPlan(productDetailsList[0].id);
+      log("initial plan selected **** ${selectedPlan.value}");
     } else {
       data.value = "No Plan Found!";
     }

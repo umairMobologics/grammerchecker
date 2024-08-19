@@ -216,10 +216,14 @@ class _PremiumScreenState extends State<PremiumScreen> {
                                         PriceCard(
                                           index: 0,
                                           onPressed: () {
-                                            premiumC.changeSelectedPlan(
-                                                controller
-                                                    .productDetailsList[0].id);
-                                            log("Selected plan is ${selectedPlan}");
+                                            if (controller.productDetailsList
+                                                .isNotEmpty) {
+                                              premiumC.changeSelectedPlan(
+                                                  controller
+                                                      .productDetailsList[0]
+                                                      .id);
+                                              log("Selected plan is ${selectedPlan}");
+                                            }
                                           },
                                           title: "Monthly Plan",
                                           price:
@@ -236,10 +240,14 @@ class _PremiumScreenState extends State<PremiumScreen> {
                                         PriceCard(
                                           index: 1,
                                           onPressed: () {
-                                            premiumC.changeSelectedPlan(
-                                                controller
-                                                    .productDetailsList[1].id);
-                                            log("Selected plan is ${selectedPlan}");
+                                            if (controller.productDetailsList
+                                                .isNotEmpty) {
+                                              premiumC.changeSelectedPlan(
+                                                  controller
+                                                      .productDetailsList[1]
+                                                      .id);
+                                              log("Selected plan is ${selectedPlan}");
+                                            }
                                           },
                                           title: "Yearly Plan",
                                           price:
@@ -260,34 +268,36 @@ class _PremiumScreenState extends State<PremiumScreen> {
                         ),
                         InkWell(
                           onTap: () {
-                            if (selectedPlan.isNotEmpty) {
-                              if (selectedPlan == "grammarchecker_monthly" &&
-                                  !controller.isMonthlypurchased.value) {
-                                controller.buy(selectedPlan.value);
-                              } else if (selectedPlan ==
-                                      "grammarchecker_yearly" &&
-                                  !controller.isYearlypurchased.value) {
-                                controller.buy(selectedPlan.value);
+                            if (controller.productDetailsList.isNotEmpty) {
+                              if (selectedPlan.isNotEmpty) {
+                                if (selectedPlan == "grammarchecker_monthly" &&
+                                    !controller.isMonthlypurchased.value) {
+                                  controller.buy(selectedPlan.value);
+                                } else if (selectedPlan ==
+                                        "grammarchecker_yearly" &&
+                                    !controller.isYearlypurchased.value) {
+                                  controller.buy(selectedPlan.value);
+                                } else {
+                                  CustomSnackbar.showSnackbar(
+                                      "You have already subscribed this plan",
+                                      SnackPosition.BOTTOM);
+                                }
                               } else {
-                                CustomSnackbar.showSnackbar(
-                                    "You have already subscribed this plan",
-                                    SnackPosition.BOTTOM);
-                              }
-                            } else {
-                              premiumC.changeSelectedPlan(
-                                  controller.productDetailsList[0].id);
-                              log("Selected plan is ${selectedPlan}");
-                              if (selectedPlan == "grammarchecker_monthly" &&
-                                  !controller.isMonthlypurchased.value) {
-                                controller.buy(selectedPlan.value);
-                              } else if (selectedPlan ==
-                                      "grammarchecker_yearly" &&
-                                  !controller.isYearlypurchased.value) {
-                                controller.buy(selectedPlan.value);
-                              } else {
-                                CustomSnackbar.showSnackbar(
-                                    "You have already subscribed this plan",
-                                    SnackPosition.BOTTOM);
+                                premiumC.changeSelectedPlan(
+                                    controller.productDetailsList[0].id);
+                                log("Selected plan is ${selectedPlan}");
+                                if (selectedPlan == "grammarchecker_monthly" &&
+                                    !controller.isMonthlypurchased.value) {
+                                  controller.buy(selectedPlan.value);
+                                } else if (selectedPlan ==
+                                        "grammarchecker_yearly" &&
+                                    !controller.isYearlypurchased.value) {
+                                  controller.buy(selectedPlan.value);
+                                } else {
+                                  CustomSnackbar.showSnackbar(
+                                      "You have already subscribed this plan",
+                                      SnackPosition.BOTTOM);
+                                }
                               }
                             }
                           },
