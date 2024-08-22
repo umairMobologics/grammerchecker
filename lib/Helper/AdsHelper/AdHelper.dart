@@ -48,15 +48,15 @@ class AdHelper {
     throw UnsupportedError("Unsupported platform");
   }
 
-// static String get rewardedAd {
-//   if (Platform.isAndroid) {
-//     return 'ca-app-pub-9800935656438737/9316112699';
-//   }
-//   // else if (Platform.isIOS) {
-//   //   return 'ca-app-pub-3940256099942544/1712485313';
-//   // }
-//   throw UnsupportedError("Unsupported platform");
-// }
+  static String get rewardedAd {
+    if (Platform.isAndroid) {
+      return 'ca-app-pub-9800935656438737/9316112699';
+    }
+    // else if (Platform.isIOS) {
+    //   return 'ca-app-pub-3940256099942544/1712485313';
+    // }
+    throw UnsupportedError("Unsupported platform");
+  }
 }
 
 //Test IDS
@@ -113,64 +113,46 @@ class AdHelper {
 // }
 
 class AdController extends GetxController {
-  RxBool isLoaded = false.obs;
+  // RxBool isLoaded = false.obs;
 
-  Future<BannerAd?> loadAd(BuildContext context) async {
-    // Get an AnchoredAdaptiveBannerAdSize before loading the ad.
-    final AnchoredAdaptiveBannerAdSize? size =
-        await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
-            MediaQuery.of(context).size.width.truncate());
+  // Future<BannerAd?> loadAd(BuildContext context) async {
+  //   // Get an AnchoredAdaptiveBannerAdSize before loading the ad.
+  //   final AnchoredAdaptiveBannerAdSize? size =
+  //       await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+  //           MediaQuery.of(context).size.width.truncate());
 
-    if (size == null) {
-      // log('Unable to get height of anchored banner.');
-      return null;
-    }
+  //   if (size == null) {
+  //     // log('Unable to get height of anchored banner.');
+  //     return null;
+  //   }
 
-    return BannerAd(
-      // TODO: replace these test ad units with your own ad unit.
-      adUnitId: AdHelper.bannerAd,
-      size: AdSize.banner,
-      request: const AdRequest(),
-      listener: BannerAdListener(
-        onAdLoaded: (Ad ad) {
-          log('$ad loaded: ');
-          isLoaded.value = true;
-        },
-        onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          // log('Anchored adaptive banner failedToLoad: $error');
-          ad.dispose();
-        },
-      ),
-    )..load();
-  }
+  //   return BannerAd(
+  //     // TODO: replace these test ad units with your own ad unit.
+  //     adUnitId: AdHelper.bannerAd,
+  //     size: AdSize.banner,
+  //     request: const AdRequest(),
+  //     listener: BannerAdListener(
+  //       onAdLoaded: (Ad ad) {
+  //         log('$ad loaded: ');
+  //         isLoaded.value = true;
+  //       },
+  //       onAdFailedToLoad: (Ad ad, LoadAdError error) {
+  //         // log('Anchored adaptive banner failedToLoad: $error');
+  //         ad.dispose();
+  //       },
+  //     ),
+  //   )..load();
+  // }
 
   RxBool isAdLoaded = false.obs;
 //native add
   NativeAd? loadNativeAd() {
-    return NativeAd(
-      factoryId: "small",
-      adUnitId: AdHelper.nativeAd,
-      listener: NativeAdListener(onAdLoaded: (ad) {
-        isAdLoaded.value = true;
-        log("native ad is loaded");
-        // Callback to notify the ad is loaded
-      }, onAdFailedToLoad: (ad, error) {
-        log('$NativeAd failed to load: $error');
-        ad.dispose();
-      }),
-      request: const AdRequest(),
-    )..load();
-  }
-
-  RxBool isLargeAdLoaded = false.obs;
-  //native add
-  NativeAd? loadNativeAdlarge() {
     try {
       return NativeAd(
-        factoryId: "listTile",
+        factoryId: "small",
         adUnitId: AdHelper.nativeAd,
         listener: NativeAdListener(onAdLoaded: (ad) {
-          isLargeAdLoaded.value = true;
+          isAdLoaded.value = true;
           log("native ad is loaded");
           // Callback to notify the ad is loaded
         }, onAdFailedToLoad: (ad, error) {
@@ -180,12 +162,35 @@ class AdController extends GetxController {
         request: const AdRequest(),
       )..load();
     } catch (e) {
-      log("ad is not loaded cathc");
-      isLargeAdLoaded.value = false;
-
+      log("error while loading native ad $e");
       return null;
     }
   }
+
+//   RxBool isLargeAdLoaded = false.obs;
+//   //native add
+//   NativeAd? loadNativeAdlarge() {
+//     try {
+//       return NativeAd(
+//         factoryId: "listTile",
+//         adUnitId: AdHelper.nativeAd,
+//         listener: NativeAdListener(onAdLoaded: (ad) {
+//           isLargeAdLoaded.value = true;
+//           log("native ad is loaded");
+//           // Callback to notify the ad is loaded
+//         }, onAdFailedToLoad: (ad, error) {
+//           log('$NativeAd failed to load: $error');
+//           ad.dispose();
+//         }),
+//         request: const AdRequest(),
+//       )..load();
+//     } catch (e) {
+//       log("ad is not loaded cathc");
+//       isLargeAdLoaded.value = false;
+
+//       return null;
+//     }
+//   }
   // NativeAd? loadNativeAd() {
   //   return NativeAd(
   //     adUnitId: AdHelper.nativeAd,

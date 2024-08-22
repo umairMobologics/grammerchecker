@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:grammer_checker_app/API/api.dart';
 import 'package:grammer_checker_app/utils/filertAiResponse.dart';
 import 'package:grammer_checker_app/utils/snackbar.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class WritingController extends GetxController {
@@ -41,14 +42,14 @@ Enhance the following below text by addressing the following aspects:
     outputText.value = '';
     isresultLoaded.value = false;
     isListening.value = false;
-      charCount.value=0;
+    charCount.value = 0;
     speech.stop();
   }
 
   late stt.SpeechToText speech;
   var isListening = false.obs;
   RxBool available = false.obs;
-
+  final InAppReview inAppReview = InAppReview.instance;
   @override
   void onInit() {
     super.onInit();
@@ -75,6 +76,15 @@ Enhance the following below text by addressing the following aspects:
       outputText.value = filterResponse(res);
       if (outputText.value.isNotEmpty) {
         isresultLoaded.value = true;
+
+        Future.delayed(
+          Duration(seconds: 3),
+          () async {
+            if (await inAppReview.isAvailable()) {
+              inAppReview.requestReview();
+            }
+          },
+        );
       }
     } catch (e) {
       isresultLoaded.value = true;
@@ -82,7 +92,7 @@ Enhance the following below text by addressing the following aspects:
       // showToast(context, 'An error occurred: $e');
     } finally {
       isloading.value = false;
-       Navigator.of(context).pop(); // Close the loading dialog
+      Navigator.of(context).pop(); // Close the loading dialog
     }
 
     return outputText.value;

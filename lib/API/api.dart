@@ -34,28 +34,38 @@ class APIs {
       log(response.body);
       if (response.statusCode == 200) {
         log("status ok");
-        var jsonResponse = jsonDecode(response.body);
 
         // Check if the 'candidates' array is present and not empty
-        if (jsonResponse.containsKey('candidates') &&
-            jsonResponse['candidates'].isNotEmpty) {
-          var content = jsonResponse['candidates'][0]['content'];
+        try {
+          var jsonResponse = jsonDecode(response.body);
+          if (jsonResponse.containsKey('candidates') &&
+              jsonResponse['candidates'].isNotEmpty) {
+            var content = jsonResponse['candidates'][0]['content'];
 
-          // Check if the 'parts' array is present and not empty
-          if (content.containsKey('parts') && content['parts'].isNotEmpty) {
-            var generatedContent = content['parts'][0]['text'];
-            return (generatedContent);
+            // Check if the 'parts' array is present and not empty
+            if (content.containsKey('parts') && content['parts'].isNotEmpty) {
+              var generatedContent = content['parts'][0]['text'];
+
+              return (generatedContent);
+            } else {
+              log("incrrect output else");
+              CustomSnackbar.showSnackbar(
+                  "Something went wrong, please try again", SnackPosition.TOP);
+              return ('');
+            }
           } else {
-            log("incrrect output");
+            log("invalid response else");
             CustomSnackbar.showSnackbar(
-                "Something went wrong, please try again", SnackPosition.TOP);
+                "we could not response to this query.It may contain harmful words",
+                SnackPosition.TOP);
             return ('');
           }
-        } else {
-          log("invalidresponse");
+        } catch (e) {
+          log("inner catch invalid response else");
           CustomSnackbar.showSnackbar(
-              "Something went wrong, please try again", SnackPosition.TOP);
-          return ('');
+              "we could not response to this query.It may contain harmful words",
+              SnackPosition.TOP);
+          return '';
         }
       } else {
         // Handle error
@@ -73,9 +83,9 @@ class APIs {
     } catch (e) {
       // Handle exceptions
       log("$e");
+      // print('Response: ${response.body}');
       CustomSnackbar.showSnackbar(
-          "we could not response to this query.It may contain harmful words",
-          SnackPosition.BOTTOM);
+          "Something went wrong, please try again", SnackPosition.TOP);
       return ('');
     }
   }

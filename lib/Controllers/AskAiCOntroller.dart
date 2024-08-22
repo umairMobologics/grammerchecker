@@ -4,62 +4,64 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grammer_checker_app/API/api.dart';
 import 'package:grammer_checker_app/utils/filertAiResponse.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class AskAiController extends GetxController {
+  final InAppReview inAppReview = InAppReview.instance;
+
   Rx<TextEditingController> controller = TextEditingController().obs;
-  RxString outputText =''.obs;
+  RxString outputText = ''.obs;
   RxBool isresultLoaded = false.obs;
-  RxInt  charCount = 0.obs;
+  RxInt charCount = 0.obs;
   RxBool isloading = false.obs;
 
   void clearText() {
     controller.value.text = '';
-    charCount.value=  controller.value.text.length;
+    charCount.value = controller.value.text.length;
   }
 
+  Future<String> sendQuery(BuildContext context) async {
+    outputText.value = '';
+    isresultLoaded.value = false;
 
-
-Future<String> sendQuery(BuildContext context) async {
-  outputText.value = '';
-  isresultLoaded.value = false;
-
-  if (controller.value.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Message cannot be empty'),
-      ),
-    );
-    return '';
-  }
-
-  isloading.value = true;
-
-  try {
-    final res = await APIs.makeGeminiRequest(controller.value.text);
-  
-    
-
-    outputText.value = filterResponse(res);
-  log(outputText.value);
-    if (outputText.value.isNotEmpty) {
-      isresultLoaded.value = true;
+    if (controller.value.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Message cannot be empty'),
+        ),
+      );
+      return '';
     }
-  } catch (e) {
-    log('Error during API request: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('An error occurred: $e'),
-      ),
-    );
-  } finally {
-    isloading.value = false;
+
+    isloading.value = true;
+
+    try {
+      final res = await APIs.makeGeminiRequest(controller.value.text);
+
+      outputText.value = filterResponse(res);
+      log(outputText.value);
+      if (outputText.value.isNotEmpty) {
+        isresultLoaded.value = true;
+
+        Future.delayed(
+          Duration(seconds: 3),
+          () async {
+            if (await inAppReview.isAvailable()) {
+              inAppReview.requestReview();
+            }
+          },
+        );
+      }
+    } catch (e) {
+      log('Error during API request: $e');
+    } finally {
+      isloading.value = false;
       Navigator.of(context).pop(); // Close the loading dialog
+    }
+
+    return outputText.value;
   }
-
-  return outputText.value;
-}
-
 
   // mic funcationality
   late stt.SpeechToText speech;
@@ -72,14 +74,13 @@ Future<String> sendQuery(BuildContext context) async {
     speech = stt.SpeechToText();
   }
 
-  void cleardata()
-  {
-    controller.value.text ='';
-     outputText.value ='';
-      isresultLoaded.value=false;
-      isListening.value=false;
-        charCount.value=0;
-      speech.stop();
+  void cleardata() {
+    controller.value.text = '';
+    outputText.value = '';
+    isresultLoaded.value = false;
+    isListening.value = false;
+    charCount.value = 0;
+    speech.stop();
   }
 
   void listen() async {

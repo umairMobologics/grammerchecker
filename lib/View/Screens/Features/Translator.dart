@@ -34,9 +34,15 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
   final TranslatorController textController = Get.put(TranslatorController());
   final TTSController ttsController = Get.put(TTSController());
   final ScrollController _scrollController = ScrollController();
-  //load ad
   var ads = Get.put(AdController());
   NativeAd? nativeAd3;
+
+  void loadNative() async {
+    ads.isAdLoaded.value = false;
+    if (nativeAd3 == null) {
+      nativeAd3 ??= await ads.loadNativeAd();
+    }
+  }
 
   @override
   void initState() {
@@ -49,8 +55,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
         if (InterstitialAdClass.interstitialAd == null) {
           InterstitialAdClass.createInterstitialAd();
         }
-        ads.isAdLoaded.value = false;
-        nativeAd3 ??= ads.loadNativeAd();
+        loadNative();
       },
     );
     textController.isresultLoaded.listen((isLoaded) {

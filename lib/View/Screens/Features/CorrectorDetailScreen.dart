@@ -10,6 +10,7 @@ import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/customTextStyle.dart';
 import 'package:grammer_checker_app/utils/sharetext.dart';
 import 'package:grammer_checker_app/utils/snackbar.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 class CorrectorDetails extends StatefulWidget {
   const CorrectorDetails(
@@ -23,8 +24,23 @@ class CorrectorDetails extends StatefulWidget {
 
 class _CorrectorDetailsState extends State<CorrectorDetails> {
   final CorrectorController textController = Get.put(CorrectorController());
-
+  final InAppReview inAppReview = InAppReview.instance;
   final TTSController ttsController = Get.put(TTSController());
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    Future.delayed(
+      Duration(seconds: 3),
+      () async {
+        if (await inAppReview.isAvailable()) {
+          inAppReview.requestReview();
+        }
+      },
+    );
+  }
+
   @override
   void dispose() {
     WidgetsBinding.instance.addPostFrameCallback((_) {

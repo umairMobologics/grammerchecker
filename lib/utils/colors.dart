@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+Color adclr = Color(0xff3944BC);
 Color c = Color(0xff376AED);
 const Color ObColor = Color.fromARGB(255, 54, 235, 174);
 const Color mainClr = Color(0xff376AED);

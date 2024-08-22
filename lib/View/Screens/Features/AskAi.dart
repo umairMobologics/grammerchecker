@@ -33,9 +33,40 @@ class _AskAIScreenState extends State<AskAIScreen> {
   final AskAiController textController = Get.put(AskAiController());
   final TTSController ttsController = Get.put(TTSController());
   final ScrollController _scrollController = ScrollController();
-// load ad
+
+// // load ad
+//   NativeAd? nativeAd3;
+//   bool isAdLoaded = false;
+//   loadNativeAd() async {
+//     try {
+//       nativeAd3 = NativeAd(
+//         nativeTemplateStyle:
+//             NativeTemplateStyle(templateType: TemplateType.small),
+//         adUnitId: AdHelper.nativeAd,
+//         listener: NativeAdListener(
+//             onAdLoaded: (ad) {
+//               setState(() {
+//                 isAdLoaded = true;
+//               });
+//             },
+//             onAdFailedToLoad: (ad, error) {}),
+//         request: const AdRequest(),
+//       );
+
+//       nativeAd3!.load();
+//     } catch (e) {
+//       nativeAd3 = null;
+//     }
+//   }
   var ads = Get.put(AdController());
   NativeAd? nativeAd3;
+
+  void loadNative() async {
+    ads.isAdLoaded.value = false;
+    if (nativeAd3 == null) {
+      nativeAd3 ??= await ads.loadNativeAd();
+    }
+  }
 
   @override
   void initState() {
@@ -43,15 +74,12 @@ class _AskAIScreenState extends State<AskAIScreen> {
     // Listen for changes in isresultLoaded
 
     PermissionHandler.requestPermissions();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) {
-        if (InterstitialAdClass.interstitialAd == null) {
-          InterstitialAdClass.createInterstitialAd();
-        }
-        ads.isAdLoaded.value = false;
-        nativeAd3 ??= ads.loadNativeAd();
-      },
-    );
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (InterstitialAdClass.interstitialAd == null) {
+        InterstitialAdClass.createInterstitialAd();
+      }
+      loadNative();
+    });
     textController.isresultLoaded.listen((isLoaded) {
       if (isLoaded) {
         // Scroll to the bottom after the first frame is built

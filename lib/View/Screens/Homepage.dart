@@ -21,47 +21,13 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
 //load ad
-  // var ads = Get.put(AdController());
-  // NativeAd? nativeAd3;
+  var ads = Get.put(AdController());
+  NativeAd? nativeAd3;
 
-//load ad
-  BannerAd? _bannerAd2;
-  bool isLoaded = false;
-
-  loadBannerAd() async {
-    try {
-      _bannerAd2 = BannerAd(
-        adUnitId: AdHelper.bannerAd,
-        request: const AdRequest(),
-        size: AdSize.banner,
-        listener: BannerAdListener(
-          // Called when an ad is successfully received.
-          onAdLoaded: (ad) {
-            log('$ad loaded.');
-
-            setState(() {
-              isLoaded = true;
-            });
-          },
-          // Called when an ad request failed.
-          onAdFailedToLoad: (ad, err) {
-            log('BannerAd failed to load: $err');
-            // Dispose the ad here to free resources.
-            ad.dispose();
-            log('$ad loaded.');
-
-            setState(() {
-              isLoaded = false;
-            });
-          },
-        ),
-      )..load();
-    } catch (e) {
-      setState(() {
-        log("erorrrrr*********** $e");
-        _bannerAd2 = null;
-        isLoaded = false;
-      });
+  void loadNative() async {
+    ads.isAdLoaded.value = false;
+    if (nativeAd3 == null) {
+      nativeAd3 ??= await ads.loadNativeAd();
     }
   }
 
@@ -74,26 +40,15 @@ class _HomepageState extends State<Homepage> {
       }
       // ads.isAdLoaded.value = false;
       // nativeAd3 ??= ads.loadNativeAd();
-      loadAd();
+      loadNative();
     });
   }
 
-  void loadAd() async {
-    if (_bannerAd2 == null) {
-      log("homepage banner called");
-      await loadBannerAd();
-    } else {
-      log("not loaded");
-    }
-  }
-
   void disposeAd() {
-    if (_bannerAd2 != null) {
-      log("banner ad disposed");
-      _bannerAd2!.dispose();
-      _bannerAd2 = null;
-      isLoaded = false;
-    }
+    nativeAd3?.dispose();
+    nativeAd3 = null;
+    // ads.isAdLoaded.value = false;
+    log(" native ad dispose");
   }
 
   @override
@@ -267,25 +222,19 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
             ),
-            bottomNavigationBar: Obx(() =>
-                !InterstitialAdClass.isInterAddLoaded.value &&
-                        !AppOpenAdManager.isOpenAdLoaded.value &&
-                        isLoaded &&
-                        (!Subscriptioncontroller.isMonthlypurchased.value &&
-                            !Subscriptioncontroller.isYearlypurchased.value) &&
-                        _bannerAd2 != null
-                    ? Container(
-                        decoration: BoxDecoration(
-                            // color: Colors.green,
-                            border: Border.all(
-                          // color: Colors.deepPurpleAccent,
-                          width: 0,
-                        )),
-                        width: _bannerAd2!.size.width.toDouble(),
-                        height: _bannerAd2!.size.height.toDouble(),
-                        child: AdWidget(ad: _bannerAd2!),
-                      )
-                    : SizedBox())));
+            bottomNavigationBar: Obx(() => !InterstitialAdClass
+                        .isInterAddLoaded.value &&
+                    !AppOpenAdManager.isOpenAdLoaded.value &&
+                    ads.isAdLoaded.value &&
+                    (!Subscriptioncontroller.isMonthlypurchased.value &&
+                        !Subscriptioncontroller.isYearlypurchased.value) &&
+                    nativeAd3 != null
+                ? Container(
+                    decoration: BoxDecoration(border: Border.all(color: black)),
+                    height: 150,
+                    width: double.infinity,
+                    child: AdWidget(ad: nativeAd3!))
+                : SizedBox())));
   }
 }
 

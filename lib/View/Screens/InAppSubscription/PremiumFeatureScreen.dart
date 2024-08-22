@@ -266,67 +266,87 @@ class _PremiumScreenState extends State<PremiumScreen> {
                                   : Center(child: Text(controller.data.value))
                               : Center(child: CircularProgressIndicator()),
                         ),
-                        InkWell(
-                          onTap: () {
-                            if (controller.productDetailsList.isNotEmpty) {
-                              if (selectedPlan.isNotEmpty) {
-                                if (selectedPlan == "grammarchecker_monthly" &&
-                                    !controller.isMonthlypurchased.value) {
-                                  controller.buy(selectedPlan.value);
-                                } else if (selectedPlan ==
-                                        "grammarchecker_yearly" &&
-                                    !controller.isYearlypurchased.value) {
-                                  controller.buy(selectedPlan.value);
-                                } else {
-                                  CustomSnackbar.showSnackbar(
-                                      "You have already subscribed this plan",
-                                      SnackPosition.BOTTOM);
-                                }
-                              } else {
-                                premiumC.changeSelectedPlan(
-                                    controller.productDetailsList[0].id);
-                                log("Selected plan is ${selectedPlan}");
-                                if (selectedPlan == "grammarchecker_monthly" &&
-                                    !controller.isMonthlypurchased.value) {
-                                  controller.buy(selectedPlan.value);
-                                } else if (selectedPlan ==
-                                        "grammarchecker_yearly" &&
-                                    !controller.isYearlypurchased.value) {
-                                  controller.buy(selectedPlan.value);
-                                } else {
-                                  CustomSnackbar.showSnackbar(
-                                      "You have already subscribed this plan",
-                                      SnackPosition.BOTTOM);
-                                }
-                              }
-                            }
-                          },
-                          child: Obx(
-                            () => Container(
-                              padding: EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                  // color: Color.fromARGB(255, 45, 194, 181),
-                                  color: mainClr,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: mainClr)),
-                              child: Center(
-                                  child: Text(
-                                selectedPlan.value ==
-                                            "grammarchecker_monthly" &&
-                                        controller.isMonthlypurchased.value
-                                    ? "Subscribed"
-                                    : selectedPlan.value ==
+                        Obx(
+                          () => controller.productDetailsList.isEmpty
+                              ? SizedBox()
+                              : InkWell(
+                                  onTap: () {
+                                    if (controller
+                                        .productDetailsList.isNotEmpty) {
+                                      if (selectedPlan.isNotEmpty) {
+                                        if (selectedPlan ==
+                                                "grammarchecker_monthly" &&
+                                            !controller
+                                                .isMonthlypurchased.value) {
+                                          controller.buy(selectedPlan.value);
+                                        } else if (selectedPlan ==
                                                 "grammarchecker_yearly" &&
-                                            controller.isYearlypurchased.value
-                                        ? "Subscribed"
-                                        : "Subscribe",
-                                style: TextStyle(
-                                    color: white,
-                                    fontSize: mq.height * 0.025,
-                                    fontWeight: FontWeight.bold),
-                              )),
-                            ),
-                          ),
+                                            !controller
+                                                .isYearlypurchased.value) {
+                                          controller.buy(selectedPlan.value);
+                                        } else {
+                                          CustomSnackbar.showSnackbar(
+                                              "You have already subscribed this plan",
+                                              SnackPosition.BOTTOM);
+                                        }
+                                      } else {
+                                        // Safely access the first item in the list
+                                        final selectedProduct = controller
+                                                .productDetailsList.isNotEmpty
+                                            ? controller.productDetailsList[0]
+                                            : null;
+
+                                        if (selectedProduct != null) {
+                                          premiumC.changeSelectedPlan(
+                                              selectedProduct.id);
+
+                                          log("else Selected plan is ${selectedPlan}");
+                                          if (selectedPlan ==
+                                                  "grammarchecker_monthly" &&
+                                              !controller
+                                                  .isMonthlypurchased.value) {
+                                            controller.buy(selectedPlan.value);
+                                          } else if (selectedPlan ==
+                                                  "grammarchecker_yearly" &&
+                                              !controller
+                                                  .isYearlypurchased.value) {
+                                            controller.buy(selectedPlan.value);
+                                          } else {
+                                            CustomSnackbar.showSnackbar(
+                                                "You have already subscribed to this plan",
+                                                SnackPosition.BOTTOM);
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                        // color: Color.fromARGB(255, 45, 194, 181),
+                                        color: mainClr,
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(color: mainClr)),
+                                    child: Center(
+                                        child: Text(
+                                      selectedPlan.value ==
+                                                  "grammarchecker_monthly" &&
+                                              controller
+                                                  .isMonthlypurchased.value
+                                          ? "Subscribed"
+                                          : selectedPlan.value ==
+                                                      "grammarchecker_yearly" &&
+                                                  controller
+                                                      .isYearlypurchased.value
+                                              ? "Subscribed"
+                                              : "Subscribe",
+                                      style: TextStyle(
+                                          color: white,
+                                          fontSize: mq.height * 0.025,
+                                          fontWeight: FontWeight.bold),
+                                    )),
+                                  ),
+                                ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

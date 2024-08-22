@@ -10,7 +10,7 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class CorrectorController extends GetxController {
   String aiGuidlines =
-      ''' You are a grammar corrector expert and you have assugned a below task. Below is the provided text,which may have incorrect grammer or mistakes. re-write the text and must follow these steps:
+      ''' You are a grammar corrector expert and you have assigned a below task. Below is the provided text,which may have incorrect grammer or mistakes. re-write the text and must follow these steps:
 
 1. Analyze the text for grammatical mistakes.
 2. Fix spelling and punctuation mistakes.
@@ -123,7 +123,7 @@ provided text:\n
         }
       } else {
         log("incorrect output");
-        showToast(context, res);
+
         // Handle the case where the response is not valid JSON
         // showToast(context, 'Invalid response format from the API');
         outputText.value = ""; // Optionally set the raw response
@@ -131,7 +131,6 @@ provided text:\n
     } catch (e) {
       // Handle any errors that occur during the API call or JSON parsing
       log('Error: $e');
-      showToast(context, 'An error occurred:');
     } finally {
       // outputText.value = ""; // Optionally set the raw response
       isloading.value = false;

@@ -22,9 +22,16 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
+// load ad
   var ads = Get.put(AdController());
-
   NativeAd? nativeAd3;
+
+  void loadNative() async {
+    ads.isAdLoaded.value = false;
+    if (nativeAd3 == null) {
+      nativeAd3 ??= await ads.loadNativeAd();
+    }
+  }
 
   var animation = Get.put(SplashAnimation());
 
@@ -33,8 +40,7 @@ class _SplashScreenState extends State<SplashScreen>
     // TODO: implement initState
     super.initState();
 
-    ads.isAdLoaded.value = false;
-    nativeAd3 ??= ads.loadNativeAd();
+    loadNative();
 
     if (InterstitialAdClass.interstitialAd == null) {
       InterstitialAdClass.createInterstitialAd();
@@ -139,7 +145,7 @@ class _SplashScreenState extends State<SplashScreen>
                                       horizontal: mq.width * 0.10,
                                       vertical: mq.height * 0.015),
                                   decoration: BoxDecoration(
-                                      color: Color.fromARGB(255, 108, 182, 243),
+                                      color: mainClr,
                                       borderRadius: BorderRadius.circular(20)),
                                   child: Center(
                                       child: Text(
@@ -169,10 +175,10 @@ class _SplashScreenState extends State<SplashScreen>
         ],
       ),
       bottomNavigationBar: Obx(
-        () => ads.isAdLoaded.value &&
-                nativeAd3 != null &&
-                (!Subscriptioncontroller.isMonthlypurchased.value &&
-                    !Subscriptioncontroller.isYearlypurchased.value)
+        () => (!Subscriptioncontroller.isMonthlypurchased.value &&
+                    !Subscriptioncontroller.isYearlypurchased.value) &&
+                ads.isAdLoaded.value &&
+                nativeAd3 != null
             ? Container(
                 decoration: BoxDecoration(border: Border.all(color: black)),
                 height: 150,
