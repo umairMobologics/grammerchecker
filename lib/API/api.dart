@@ -31,10 +31,11 @@ class APIs {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(requestBody),
       );
-      log(response.body);
+
       if (response.statusCode == 200) {
         log("status ok");
 
+        log(response.body);
         // Check if the 'candidates' array is present and not empty
         try {
           var jsonResponse = jsonDecode(response.body);

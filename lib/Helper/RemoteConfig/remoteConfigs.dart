@@ -23,19 +23,19 @@ class RemoteConfig {
       await _config.setDefaults(_defaultValues);
       //fetch remote values
       await _config.fetch();
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(minutes: 10));
       await _config.activate();
       log('Remote Config Data: ${_config.getString('apiKey')}');
 //activate remote values
-      _config.onConfigUpdated.listen(
-        (event) async {
-          await _config.activate();
-          log('Updated: ${_config.getString('apiUrl')}');
-        },
-        onError: (final e) {
-          // Ignore RC errors
-        },
-      );
+      // _config.onConfigUpdated.listen(
+      //   (event) async {
+      //     await _config.activate();
+      //     log('Updated: ${_config.getString('apiUrl')}');
+      //   },
+      //   onError: (final e) {
+      //     // Ignore RC errors
+      //   },
+      // );
     } on SocketException catch (error) {
       log("Socket Exception occured************* $error");
     } on PlatformException catch (exception) {

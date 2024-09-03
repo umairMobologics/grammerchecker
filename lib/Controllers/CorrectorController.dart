@@ -4,54 +4,64 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grammer_checker_app/API/api.dart';
-import 'package:grammer_checker_app/View/Screens/Features/CorrectorDetailScreen.dart';
+import 'package:grammer_checker_app/Controllers/limitedTokens/limitedTokens.dart';
+import 'package:grammer_checker_app/utils/filertAiResponse.dart';
 import 'package:grammer_checker_app/utils/snackbar.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class CorrectorController extends GetxController {
   String aiGuidlines =
-      ''' You are a grammar corrector expert and you have assigned a below task. Below is the provided text,which may have incorrect grammer or mistakes. re-write the text and must follow these steps:
+      '''You are a grammar corrector expert tasked with improving the provided text. The text  contain grammatical errors, spelling mistakes, and punctuation issues. Your task is to thoroughly analyze and correct the text, following these steps:
 
-1. Analyze the text for grammatical mistakes.
-2. Fix spelling and punctuation mistakes.
-3. Maintain the original tone and style of the text.
-4. Important!: Highlight each mistake from text by enclosing the words or phrases in large brackets [].
-5. After highlighting the mistakes, provide a corrected version of the text.
-6. Important!: Highlight each corrected word of correxted text by enclosing the words or phrases in curly brackets {}.
-7. Ensure the corrected text is grammatically correct, clear, and well-structured.
-8. Note: If the text contains a person/human name, then leave the name as it is.
+1.Thoroughly analyze the text for all grammatical mistakes, spelling errors, and punctuation issues.
+2.Correct every mistake you find and rewrite the text , without leaving any errors unaddressed.
+3.Ensure the corrected text retains the original tone and style, but is grammatically correct, clear, and well-structured.
+4.Do not leave any errors uncorrected.
+5.If the text contains a person/human name, leave the name as it is.
+6. Respond with only the corrected text without any headings, labels, or extra commentary.
 
-
-
-
-Please make sure to read all guidelines before answering. Respond only in JSON format. The format should be:
-
-{
-  "Highlighted Mistakes": "Text with mistakes highlighted including []",
-  "Corrected Text": "Text with corrections highlighted including {}"
-}
-
-Example:
-
-"John and me goes to the store. He dont like the store's layout, it was too cluttered. Their were many products but not much organization. I seen a lot of items that catch my eye. We buyed some fruits, vegetables, and breads. On our way back, John sayed he forget his wallet at home. We was worried about how to pay, but I remember I have some cash with me."
-
-Expected output:
-{
-  "Highlighted Mistakes": "John and [me] [goes] to the store. He [dont] like the store's layout, [it] was too cluttered. [Their] were many products but not much organization. I [seen] a lot of items that [catch] my eye. We [buyed] some fruits, vegetables, and [breads]. On our way back, John [sayed] he [forget] his wallet at home. We [was] worried about how to pay, but I [remember] I have some cash with me.",
-  "Corrected Text": "John and {I} {go} to the store. He {doesn't} like the store's layout; {it} was too cluttered. {There} were many products but not much organization. I {saw} a lot of items that {caught} my eye. We {bought} some fruits, vegetables, and {bread}. On our way back, John {said} he {forgot} his wallet at home. We {were} worried about how to pay, but I {remembered} I have some cash with me."
-}
-
-
-Here is the text in which you have to apply these rules also make sure dont skip the text,the response should be full:
 provided text:\n
 
-
 ''';
+//   String aiGuidlines =
+//       ''' You are a grammar corrector expert and you have assigned a below task. Below is the provided text,which may have incorrect grammer or mistakes. re-write the text and must follow these steps:
+
+// 1. Analyze the text for grammatical mistakes.
+// 2. Fix spelling and punctuation mistakes.
+// 3. Maintain the original tone and style of the text.
+// 4. Important!: Highlight each mistake from text by enclosing the words or phrases in large brackets [].
+// 5. After highlighting the mistakes, provide a corrected version of the text.
+// 6. Important!: Highlight each corrected word of correxted text by enclosing the words or phrases in curly brackets {}.
+// 7. Ensure the corrected text is grammatically correct, clear, and well-structured.
+// 8. Note: If the text contains a person/human name, then leave the name as it is.
+
+// Please make sure to read all guidelines before answering. Respond only in JSON format. The format should be:
+
+// {
+//   "Highlighted Mistakes": "Text with mistakes highlighted including []",
+//   "Corrected Text": "Text with corrections highlighted including {}"
+// }
+
+// Example:
+
+// "John and me goes to the store. He dont like the store's layout, it was too cluttered. Their were many products but not much organization. I seen a lot of items that catch my eye. We buyed some fruits, vegetables, and breads. On our way back, John sayed he forget his wallet at home. We was worried about how to pay, but I remember I have some cash with me."
+
+// Expected output:
+// {
+//   "Highlighted Mistakes": "John and [me] [goes] to the store. He [dont] like the store's layout, [it] was too cluttered. [Their] were many products but not much organization. I [seen] a lot of items that [catch] my eye. We [buyed] some fruits, vegetables, and [breads]. On our way back, John [sayed] he [forget] his wallet at home. We [was] worried about how to pay, but I [remember] I have some cash with me.",
+//   "Corrected Text": "John and {I} {go} to the store. He {doesn't} like the store's layout; {it} was too cluttered. {There} were many products but not much organization. I {saw} a lot of items that {caught} my eye. We {bought} some fruits, vegetables, and {bread}. On our way back, John {said} he {forgot} his wallet at home. We {were} worried about how to pay, but I {remembered} I have some cash with me."
+// }
+
+// Here is the text in which you have to apply these rules also make sure dont skip the text,the response should be full:
+// provided text:\n
+
+// ''';
 
 // Send the prompt along with the user's query to the Chat API
 
   Rx<TextEditingController> controller = TextEditingController().obs;
   RxString outputText = ''.obs;
+  RxString filterText = ''.obs;
   RxBool isresultLoaded = false.obs;
   RxInt charCount = 0.obs;
   RxBool isloading = false.obs;
@@ -82,7 +92,9 @@ provided text:\n
     speech = stt.SpeechToText();
   }
 
-  Future<String> sendQuery(BuildContext context) async {
+  Future<String> sendQuery2(
+      BuildContext context, TokenLimitService askAILimit) async {
+    speech.stop();
     outputText.value = '';
     isresultLoaded.value = false;
 
@@ -100,33 +112,28 @@ provided text:\n
       log(res);
 
       // Check if the response is a valid JSON
-      if (_isValidJson(res)) {
-        // Parse the JSON response
-        final Map<String, dynamic> jsonResponse = jsonDecode(res);
 
-        // Extract highlighted mistakes and corrected text
-        highlightedMistakes.value = jsonResponse['Highlighted Mistakes'];
-        correctedText.value = jsonResponse['Corrected Text'];
+      // Parse the JSON response
 
-        // You can now set the outputText to include both parts separately
+      // You can now set the outputText to include both parts separately
 
-        outputText.value = removeBracketsAndSetOutput(correctedText.value);
-        log("filertred text${outputText.value}");
+      outputText.value = await filterResponse(res);
 
-        if (outputText.value.isNotEmpty) {
-          isresultLoaded.value = true;
-          Navigator.of(context).pop(); // Close the loading dialog
-          await Get.to(() => CorrectorDetails(
-                mistaletext: highlightedMistakes.value,
-                correctedText: correctedText.value,
-              ));
-        }
+      filterText.value = moreFilterResponse(outputText.value);
+      log("filertred text${filterText.value}");
+
+      if (outputText.value.isNotEmpty) {
+        isresultLoaded.value = true;
+        log("true! use feature");
+        await askAILimit.useFeature();
+        // Navigator.of(context).pop(); // Close the loading dialog
+        // await Get.to(() => CorrectorDetails(
+        //       mistaletext: highlightedMistakes.value,
+        //       correctedText: correctedText.value,
+        //     ));
       } else {
-        log("incorrect output");
-
-        // Handle the case where the response is not valid JSON
-        // showToast(context, 'Invalid response format from the API');
-        outputText.value = ""; // Optionally set the raw response
+        isresultLoaded.value = false;
+        outputText.value = '';
       }
     } catch (e) {
       // Handle any errors that occur during the API call or JSON parsing
@@ -134,13 +141,71 @@ provided text:\n
     } finally {
       // outputText.value = ""; // Optionally set the raw response
       isloading.value = false;
-      if (!isresultLoaded.value) {
-        Navigator.of(context).pop(); // Close the loading dialog
-      }
+      Navigator.of(context).pop(); // Close the loading dialog
     }
 
     return "";
   }
+
+  // Future<String> sendQuery(BuildContext context) async {
+  //   outputText.value = '';
+  //   isresultLoaded.value = false;
+
+  //   if (controller.value.text.isEmpty) {
+  //     showToast(context, 'Message cannot be empty');
+  //     return '';
+  //   }
+
+  //   isloading.value = true;
+  //   var finalText = "$aiGuidlines  ${controller.value.text}";
+  //   log(finalText);
+
+  //   try {
+  //     final res = await APIs.makeGeminiRequest(finalText);
+  //     log(res);
+
+  //     // Check if the response is a valid JSON
+  //     if (_isValidJson(res)) {
+  //       // Parse the JSON response
+  //       final Map<String, dynamic> jsonResponse = jsonDecode(res);
+
+  //       // Extract highlighted mistakes and corrected text
+  //       highlightedMistakes.value = jsonResponse['Highlighted Mistakes'];
+  //       correctedText.value = jsonResponse['Corrected Text'];
+
+  //       // You can now set the outputText to include both parts separately
+
+  //       outputText.value = removeBracketsAndSetOutput(correctedText.value);
+  //       log("filertred text${outputText.value}");
+
+  //       if (outputText.value.isNotEmpty) {
+  //         isresultLoaded.value = true;
+  //         Navigator.of(context).pop(); // Close the loading dialog
+  //         await Get.to(() => CorrectorDetails(
+  //               mistaletext: highlightedMistakes.value,
+  //               correctedText: correctedText.value,
+  //             ));
+  //       }
+  //     } else {
+  //       log("incorrect output");
+
+  //       // Handle the case where the response is not valid JSON
+  //       // showToast(context, 'Invalid response format from the API');
+  //       outputText.value = ""; // Optionally set the raw response
+  //     }
+  //   } catch (e) {
+  //     // Handle any errors that occur during the API call or JSON parsing
+  //     log('Error: $e');
+  //   } finally {
+  //     // outputText.value = ""; // Optionally set the raw response
+  //     isloading.value = false;
+  //     if (!isresultLoaded.value) {
+  //       Navigator.of(context).pop(); // Close the loading dialog
+  //     }
+  //   }
+
+  //   return "";
+  // }
 
 //removing brfckets
   // Method to remove brackets and set the value to outputText
@@ -248,4 +313,34 @@ provided text:\n
       speech.stop();
     }
   }
+}
+
+List<TextSpan> compareTexts(String original, String corrected) {
+  List<TextSpan> spans = [];
+  List<String> originalWords = original.split(RegExp(r'\s+'));
+  List<String> correctedWords = corrected.split(RegExp(r'\s+'));
+
+  int j = 0; // Index for originalWords
+
+  for (int i = 0; i < correctedWords.length; i++) {
+    if (j < originalWords.length && originalWords[j] == correctedWords[i]) {
+      // If words match, just add the word
+      spans.add(TextSpan(text: correctedWords[i] + ' '));
+      j++; // Move to the next word in originalWords
+    } else {
+      // If words don't match, highlight the corrected word
+      spans.add(TextSpan(
+        text: correctedWords[i] + ' ',
+        style: TextStyle(color: Colors.green),
+      ));
+      // Check if this word exists in the original text somewhere after the current index
+      if (j < originalWords.length &&
+          originalWords.contains(correctedWords[i])) {
+        // Find the index of this word in the original text after the current index
+        j = originalWords.indexOf(correctedWords[i], j);
+      }
+    }
+  }
+
+  return spans;
 }

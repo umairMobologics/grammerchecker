@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
@@ -10,8 +11,8 @@ import 'package:grammer_checker_app/Helper/AdsHelper/AppOpenAdManager.dart';
 import 'package:grammer_checker_app/Helper/AdsHelper/app_lifecycle_reactor.dart';
 import 'package:grammer_checker_app/View/Screens/Features/AskAi.dart';
 import 'package:grammer_checker_app/View/Screens/Features/Corrector.dart';
+import 'package:grammer_checker_app/View/Screens/Features/ParaphraseScreen.dart';
 import 'package:grammer_checker_app/View/Screens/Features/Translator.dart';
-import 'package:grammer_checker_app/View/Screens/Features/WritingScreen.dart';
 import 'package:grammer_checker_app/View/Screens/Homepage.dart';
 import 'package:grammer_checker_app/View/Screens/InAppSubscription/PremiumFeatureScreen.dart';
 import 'package:grammer_checker_app/main.dart';
@@ -38,10 +39,17 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
 
   List widgets = [
     const AskAIScreen(),
-    const WritingAssistentScreen(),
+    const ParaphrasesScreen(),
     const Homepage(),
     const CorrectorScreen(),
     const TranslatorScreen(),
+  ];
+  static List pagesname = [
+    'ASk AI screen',
+    'Paraphraser Screen',
+    'Homepage',
+    'Corrector Screen',
+    'Translator Screen'
   ];
 
   @override
@@ -201,6 +209,17 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
                             }
                             log('current selected index $tabIndex');
                             page.value = tabIndex;
+
+                            FirebaseAnalytics.instance.logEvent(
+                                name: 'Pages_tracked',
+                                parameters: {
+                                  "Page name ": pagesname[tabIndex],
+                                  "page index": tabIndex
+                                }).then(
+                              (value) {
+                                log("Event sent Successfully ***********");
+                              },
+                            );
                           }
                         : null,
                     currentIndex: page.value,
@@ -216,7 +235,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
                               )
                             : SvgPicture.asset("assets/Icons/askai.svg",
                                 height: mq.height * 0.038),
-                        label: "askai".tr,
+                        label: "ask".tr,
                       ),
                       BottomNavigationBarItem(
                         icon: page.value != 1
@@ -226,7 +245,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
                               )
                             : SvgPicture.asset("assets/Icons/writer.svg",
                                 height: mq.height * 0.038),
-                        label: "writer".tr,
+                        label: "paraphrase".tr,
                       ),
                       BottomNavigationBarItem(
                         icon: page.value != 2

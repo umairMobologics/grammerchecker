@@ -64,7 +64,8 @@ Future main() async {
   }
   //analytics
   FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
-
+  // set observer
+  FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance);
   //crashlytics
   // Pass all uncaught "fatal" errors from the framework to Crashlytics
   FlutterError.onError = (errorDetails) {
@@ -117,7 +118,9 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return GetMaterialApp(
         locale: widget.savedLocale ?? Get.deviceLocale,
-
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+        ],
         // locale: const Locale('zh', 'Pk'),
         translations: Languages(), // This provides the translations
         fallbackLocale:
@@ -153,6 +156,6 @@ class _MyAppState extends State<MyApp> {
         //     "onboard": (context) => OnboardingScreen(),
         //   },
         // );
-        home: const SplashScreen());
+        home: SplashScreen());
   }
 }

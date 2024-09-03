@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grammer_checker_app/API/api.dart';
+import 'package:grammer_checker_app/Controllers/limitedTokens/limitedTokens.dart';
 import 'package:grammer_checker_app/utils/filertAiResponse.dart';
 import 'package:grammer_checker_app/utils/snackbar.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -19,7 +20,9 @@ Enhance the following below text by addressing the following aspects:
 - Don't use complicated words which are unable to understand.
 - Ensure logical flow and coherence throughout the text.\n\n
 
- Original text : 
+write down the text only. do not add any headings, labels, or extra commentary.\n
+ 
+
 """;
 
 // Send the prompt along with the user's query to the Chat API
@@ -56,7 +59,8 @@ Enhance the following below text by addressing the following aspects:
     speech = stt.SpeechToText();
   }
 
-  Future<String> sendQuery(BuildContext context) async {
+  Future<String> sendQuery(
+      BuildContext context, TokenLimitService askAILimit) async {
     outputText.value = '';
     isresultLoaded.value = false;
 
@@ -76,6 +80,8 @@ Enhance the following below text by addressing the following aspects:
       outputText.value = filterResponse(res);
       if (outputText.value.isNotEmpty) {
         isresultLoaded.value = true;
+        log("true! use feature");
+        await askAILimit.useFeature();
 
         Future.delayed(
           Duration(seconds: 3),

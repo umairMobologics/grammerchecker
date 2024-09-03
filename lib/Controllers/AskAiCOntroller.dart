@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grammer_checker_app/API/api.dart';
+import 'package:grammer_checker_app/Controllers/limitedTokens/limitedTokens.dart';
 import 'package:grammer_checker_app/utils/filertAiResponse.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
@@ -21,7 +22,8 @@ class AskAiController extends GetxController {
     charCount.value = controller.value.text.length;
   }
 
-  Future<String> sendQuery(BuildContext context) async {
+  Future<String> sendQuery(
+      BuildContext context, TokenLimitService askAILimit) async {
     outputText.value = '';
     isresultLoaded.value = false;
 
@@ -43,7 +45,8 @@ class AskAiController extends GetxController {
       log(outputText.value);
       if (outputText.value.isNotEmpty) {
         isresultLoaded.value = true;
-
+        log("true! use feature");
+        await askAILimit.useFeature();
         Future.delayed(
           Duration(seconds: 3),
           () async {

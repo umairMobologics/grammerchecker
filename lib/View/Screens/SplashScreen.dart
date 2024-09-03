@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -22,14 +24,40 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-// load ad
-  var ads = Get.put(AdController());
-  NativeAd? nativeAd3;
+// // load ad
+//   var ads = Get.put(AdController());
+//   NativeAd? nativeAd3;
 
-  void loadNative() async {
-    ads.isAdLoaded.value = false;
-    if (nativeAd3 == null) {
-      nativeAd3 ??= await ads.loadNativeAd();
+//   void loadNative() async {
+//     ads.isAdLoaded.value = false;
+//     if (nativeAd3 == null) {
+//       nativeAd3 ??= await ads.loadNativeAd();
+//     }
+//   }
+// load ad
+  NativeAd? nativeAd3;
+  bool isAdLoaded = false;
+  loadNativeAd() async {
+    try {
+      nativeAd3 = NativeAd(
+        factoryId: "small",
+        adUnitId: AdHelper.nativeAd,
+        listener: NativeAdListener(onAdLoaded: (ad) {
+          setState(() {
+            isAdLoaded = true;
+            log("native splas loade d");
+          });
+        }, onAdFailedToLoad: (ad, error) {
+          log("natve splash faled to load");
+        }),
+        request: const AdRequest(),
+      );
+
+      nativeAd3!.load();
+    } catch (e, stackTrace) {
+      nativeAd3 = null;
+      log('Error loading ad: $e');
+      FirebaseCrashlytics.instance.recordError(e, stackTrace);
     }
   }
 
@@ -40,25 +68,38 @@ class _SplashScreenState extends State<SplashScreen>
     // TODO: implement initState
     super.initState();
 
-    loadNative();
-
+    if (nativeAd3 == null) {
+      loadNativeAd();
+    }
     if (InterstitialAdClass.interstitialAd == null) {
       InterstitialAdClass.createInterstitialAd();
     }
   }
 
-  void disposeads() {
-    nativeAd3?.dispose();
-    nativeAd3 = null;
-    log("native splash dosposed");
+  void disposeAd() {
+    if (nativeAd3 != null) {
+      nativeAd3?.dispose();
+      nativeAd3 = null;
+      // ads.isAdLoaded.value = false;
+      log(" native ad dispose");
+    }
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    disposeads();
+    disposeAd();
     animation.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // add setCurrentScreeninstead of initState because might not always give you the
+    // expected results because initState() is called before the widget
+    // is fully initialized, so the screen might not be visible yet.
+    FirebaseAnalytics.instance.logScreenView(screenName: "Splash Screen");
   }
 
   @override
@@ -177,7 +218,7 @@ class _SplashScreenState extends State<SplashScreen>
       bottomNavigationBar: Obx(
         () => (!Subscriptioncontroller.isMonthlypurchased.value &&
                     !Subscriptioncontroller.isYearlypurchased.value) &&
-                ads.isAdLoaded.value &&
+                isAdLoaded &&
                 nativeAd3 != null
             ? Container(
                 decoration: BoxDecoration(border: Border.all(color: black)),
