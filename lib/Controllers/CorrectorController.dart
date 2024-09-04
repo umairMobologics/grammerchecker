@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -111,10 +110,6 @@ provided text:\n
       final res = await APIs.makeGeminiRequest(finalText);
       log(res);
 
-      // Check if the response is a valid JSON
-
-      // Parse the JSON response
-
       // You can now set the outputText to include both parts separately
 
       outputText.value = await filterResponse(res);
@@ -126,11 +121,6 @@ provided text:\n
         isresultLoaded.value = true;
         log("true! use feature");
         await askAILimit.useFeature();
-        // Navigator.of(context).pop(); // Close the loading dialog
-        // await Get.to(() => CorrectorDetails(
-        //       mistaletext: highlightedMistakes.value,
-        //       correctedText: correctedText.value,
-        //     ));
       } else {
         isresultLoaded.value = false;
         outputText.value = '';
@@ -145,125 +135,6 @@ provided text:\n
     }
 
     return "";
-  }
-
-  // Future<String> sendQuery(BuildContext context) async {
-  //   outputText.value = '';
-  //   isresultLoaded.value = false;
-
-  //   if (controller.value.text.isEmpty) {
-  //     showToast(context, 'Message cannot be empty');
-  //     return '';
-  //   }
-
-  //   isloading.value = true;
-  //   var finalText = "$aiGuidlines  ${controller.value.text}";
-  //   log(finalText);
-
-  //   try {
-  //     final res = await APIs.makeGeminiRequest(finalText);
-  //     log(res);
-
-  //     // Check if the response is a valid JSON
-  //     if (_isValidJson(res)) {
-  //       // Parse the JSON response
-  //       final Map<String, dynamic> jsonResponse = jsonDecode(res);
-
-  //       // Extract highlighted mistakes and corrected text
-  //       highlightedMistakes.value = jsonResponse['Highlighted Mistakes'];
-  //       correctedText.value = jsonResponse['Corrected Text'];
-
-  //       // You can now set the outputText to include both parts separately
-
-  //       outputText.value = removeBracketsAndSetOutput(correctedText.value);
-  //       log("filertred text${outputText.value}");
-
-  //       if (outputText.value.isNotEmpty) {
-  //         isresultLoaded.value = true;
-  //         Navigator.of(context).pop(); // Close the loading dialog
-  //         await Get.to(() => CorrectorDetails(
-  //               mistaletext: highlightedMistakes.value,
-  //               correctedText: correctedText.value,
-  //             ));
-  //       }
-  //     } else {
-  //       log("incorrect output");
-
-  //       // Handle the case where the response is not valid JSON
-  //       // showToast(context, 'Invalid response format from the API');
-  //       outputText.value = ""; // Optionally set the raw response
-  //     }
-  //   } catch (e) {
-  //     // Handle any errors that occur during the API call or JSON parsing
-  //     log('Error: $e');
-  //   } finally {
-  //     // outputText.value = ""; // Optionally set the raw response
-  //     isloading.value = false;
-  //     if (!isresultLoaded.value) {
-  //       Navigator.of(context).pop(); // Close the loading dialog
-  //     }
-  //   }
-
-  //   return "";
-  // }
-
-//removing brfckets
-  // Method to remove brackets and set the value to outputText
-  String removeBracketsAndSetOutput(String text) {
-    String cleanedText = text.replaceAll(RegExp(r'[\{\}\[\]]'), '');
-    return cleanedText;
-  }
-
-// Function to parse and style text
-  TextSpan parseAndStyleText(String text, Color bracketColor, Color textColor) {
-    List<TextSpan> children = [];
-    RegExp bracketExp = RegExp(r'(\[.*?\])|(\{.*?\})');
-
-    text.splitMapJoin(
-      bracketExp,
-      onMatch: (Match match) {
-        String matchText = match[0]!;
-        if (matchText.startsWith('[') && matchText.endsWith(']')) {
-          children.add(
-            TextSpan(
-              text: matchText.substring(
-                  1, matchText.length - 1), // Remove brackets
-              style: const TextStyle(color: Colors.red),
-            ),
-          );
-        } else if (matchText.startsWith('{') && matchText.endsWith('}')) {
-          children.add(
-            TextSpan(
-              text: matchText.substring(
-                  1, matchText.length - 1), // Remove brackets
-              style: const TextStyle(color: Colors.green),
-            ),
-          );
-        }
-        return matchText;
-      },
-      onNonMatch: (String nonMatchText) {
-        children.add(
-          TextSpan(
-            text: nonMatchText,
-            style: TextStyle(color: textColor),
-          ),
-        );
-        return nonMatchText;
-      },
-    );
-
-    return TextSpan(children: children);
-  }
-
-// Helper function to check if a string is valid JSON
-  bool _isValidJson(String str) {
-    try {
-      jsonDecode(str);
-      return true;
-    } catch (e) {
-      return false;
-    }
   }
 
   //listen voice
@@ -313,34 +184,4 @@ provided text:\n
       speech.stop();
     }
   }
-}
-
-List<TextSpan> compareTexts(String original, String corrected) {
-  List<TextSpan> spans = [];
-  List<String> originalWords = original.split(RegExp(r'\s+'));
-  List<String> correctedWords = corrected.split(RegExp(r'\s+'));
-
-  int j = 0; // Index for originalWords
-
-  for (int i = 0; i < correctedWords.length; i++) {
-    if (j < originalWords.length && originalWords[j] == correctedWords[i]) {
-      // If words match, just add the word
-      spans.add(TextSpan(text: correctedWords[i] + ' '));
-      j++; // Move to the next word in originalWords
-    } else {
-      // If words don't match, highlight the corrected word
-      spans.add(TextSpan(
-        text: correctedWords[i] + ' ',
-        style: TextStyle(color: Colors.green),
-      ));
-      // Check if this word exists in the original text somewhere after the current index
-      if (j < originalWords.length &&
-          originalWords.contains(correctedWords[i])) {
-        // Find the index of this word in the original text after the current index
-        j = originalWords.indexOf(correctedWords[i], j);
-      }
-    }
-  }
-
-  return spans;
 }
