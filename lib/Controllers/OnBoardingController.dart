@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grammer_checker_app/View/Screens/BottomNav/BottomNavScreen.dart';
+import 'package:grammer_checker_app/View/Screens/InAppSubscription/PremiumFeatureScreen.dart';
+import 'package:grammer_checker_app/main.dart';
 
 class OnboardingController extends GetxController {
   var currentPage = 0.obs;
@@ -21,6 +23,13 @@ class OnboardingController extends GetxController {
   }
 
   void goToHome() {
-    Get.off(() => BottomNavBarScreen());
+    if (!Subscriptioncontroller.isMonthlypurchased.value &&
+        !Subscriptioncontroller.isYearlypurchased.value) {
+      Get.to(() => const PremiumScreen(
+            isSplash: true,
+          ));
+    } else {
+      Get.off(() => const BottomNavBarScreen());
+    }
   }
 }

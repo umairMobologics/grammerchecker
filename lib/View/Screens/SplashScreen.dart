@@ -151,27 +151,26 @@ class _SplashScreenState extends State<SplashScreen>
                       () => animation.splashScreenButtonShown.value
                           ? InkWell(
                               onTap: () {
-                                if (InterstitialAdClass.interstitialAd !=
-                                        null &&
-                                    (!Subscriptioncontroller
-                                            .isMonthlypurchased.value &&
-                                        !Subscriptioncontroller
-                                            .isYearlypurchased.value)) {
-                                  InterstitialAdClass.showInterstitialAd(
-                                      context);
-                                  InterstitialAdClass.count = 0;
-                                }
-
-                                if (!Subscriptioncontroller
-                                        .isMonthlypurchased.value &&
-                                    !Subscriptioncontroller
-                                        .isYearlypurchased.value) {
-                                  Get.to(() => const PremiumScreen(
-                                        isSplash: true,
-                                      ));
+                                if (initScreen == 0 || initScreen == null) {
+                                  Get.to(() => OnboardingScreen());
                                 } else {
-                                  if (initScreen == 0 || initScreen == null) {
-                                    Get.to(() => OnboardingScreen());
+                                  if (InterstitialAdClass.interstitialAd !=
+                                          null &&
+                                      (!Subscriptioncontroller
+                                              .isMonthlypurchased.value &&
+                                          !Subscriptioncontroller
+                                              .isYearlypurchased.value)) {
+                                    InterstitialAdClass.showInterstitialAd(
+                                        context);
+                                    InterstitialAdClass.count = 0;
+                                  }
+                                  if (!Subscriptioncontroller
+                                          .isMonthlypurchased.value &&
+                                      !Subscriptioncontroller
+                                          .isYearlypurchased.value) {
+                                    Get.to(() => const PremiumScreen(
+                                          isSplash: true,
+                                        ));
                                   } else {
                                     Get.off(() => const BottomNavBarScreen());
                                   }
@@ -190,7 +189,7 @@ class _SplashScreenState extends State<SplashScreen>
                                       borderRadius: BorderRadius.circular(20)),
                                   child: Center(
                                       child: Text(
-                                    "Start",
+                                    "start".tr,
                                     style: customTextStyle(
                                         fontSize: mq.height * 0.025,
                                         color: white,

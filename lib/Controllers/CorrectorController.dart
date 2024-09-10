@@ -1,27 +1,51 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:grammer_checker_app/API/api.dart';
+import 'package:grammer_checker_app/API/apiResponse.dart';
 import 'package:grammer_checker_app/Controllers/limitedTokens/limitedTokens.dart';
 import 'package:grammer_checker_app/utils/filertAiResponse.dart';
 import 'package:grammer_checker_app/utils/snackbar.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class CorrectorController extends GetxController {
   String aiGuidlines =
-      '''You are a grammar corrector expert tasked with improving the provided text. The text  contain grammatical errors, spelling mistakes, and punctuation issues. Your task is to thoroughly analyze and correct the text, following these steps:
+      '''You are a grammar corrector expert tasked with improving the provided text and explaining the corrections made. The text contains grammatical errors, spelling mistakes, and punctuation issues. Your task is to:
 
-1.Thoroughly analyze the text for all grammatical mistakes, spelling errors, and punctuation issues.
-2.Correct every mistake you find and rewrite the text , without leaving any errors unaddressed.
-3.Ensure the corrected text retains the original tone and style, but is grammatically correct, clear, and well-structured.
-4.Do not leave any errors uncorrected.
-5.If the text contains a person/human name, leave the name as it is.
-6. Respond with only the corrected text without any headings, labels, or extra commentary.
+1. Thoroughly analyze the text for all grammatical mistakes, spelling errors, and punctuation issues.
+2. Correct every mistake you find and rewrite the text, without leaving any errors unaddressed.
+3. Ensure the corrected text retains the original tone and style, but is grammatically correct, clear, and well-structured.
+4. Do not leave any errors uncorrected.
+5. If the text contains a person/human name, leave the name as it is.
+6. Provide the response in valid JSON format with two parts:
+  "correctedText": This should contain only the corrected version of the text.
+   "explanation": This should provide an explanation for each key change made, ensuring all quotes (`"`) are escaped as `\"` and newlines are handled correctly within the JSON.
 
-provided text:\n
+The JSON structure should be:
 
+{
+  "correctedText": "Here is the corrected text",
+  "explanation": "Here is the explanation of the corrections with properly escaped characters like \" and newline support."
+}
+
+Provided text:\n
 ''';
+
+//   String aiGuidlines =
+//       '''You are a grammar corrector expert tasked with improving the provided text. The text  contain grammatical errors, spelling mistakes, and punctuation issues. Your task is to thoroughly analyze and correct the text, following these steps:
+
+// 1.Thoroughly analyze the text for all grammatical mistakes, spelling errors, and punctuation issues.
+// 2.Correct every mistake you find and rewrite the text , without leaving any errors unaddressed.
+// 3.Ensure the corrected text retains the original tone and style, but is grammatically correct, clear, and well-structured.
+// 4.Do not leave any errors uncorrected.
+// 5.If the text contains a person/human name, leave the name as it is.
+// 6. Respond with only the corrected text without any headings, labels, or extra commentary.
+
+// provided text:\n
+
+// ''';
 //   String aiGuidlines =
 //       ''' You are a grammar corrector expert and you have assigned a below task. Below is the provided text,which may have incorrect grammer or mistakes. re-write the text and must follow these steps:
 
@@ -57,6 +81,7 @@ provided text:\n
 // ''';
 
 // Send the prompt along with the user's query to the Chat API
+  final InAppReview inAppReview = InAppReview.instance;
 
   Rx<TextEditingController> controller = TextEditingController().obs;
   RxString outputText = ''.obs;
@@ -66,6 +91,8 @@ provided text:\n
   RxBool isloading = false.obs;
   RxString highlightedMistakes = ''.obs;
   RxString correctedText = ''.obs;
+  RxString isCopyLength = ''.obs;
+  RxBool isCopyOutput = false.obs;
 
   void clearText() {
     controller.value.text = '';
@@ -98,6 +125,7 @@ provided text:\n
     isresultLoaded.value = false;
 
     if (controller.value.text.isEmpty) {
+      log("emoty..");
       showToast(context, 'Message cannot be empty');
       return '';
     }
@@ -107,23 +135,63 @@ provided text:\n
     log(finalText);
 
     try {
-      final res = await APIs.makeGeminiRequest(finalText);
+      var res = await APIs.makeGeminiRequest(finalText);
       log(res);
 
       // You can now set the outputText to include both parts separately
 
-      outputText.value = await filterResponse(res);
+      // Check if the response is a valid JSON
+      if (res.contains('JSON') ||
+          res.contains('json') ||
+          res.contains("```") ||
+          res.contains('{')) {
+        // Remove unwanted "JSON" word and backticks
+        res = res
+            .replaceAll('JSON', '')
+            .replaceAll('```', '')
+            .replaceAll('json', '');
+        res = await filterResponse(res);
 
-      filterText.value = moreFilterResponse(outputText.value);
-      log("filertred text${filterText.value}");
+        // Parse the JSON response
+        final Map<String, dynamic> jsonResponse = jsonDecode(res);
 
-      if (outputText.value.isNotEmpty) {
-        isresultLoaded.value = true;
-        log("true! use feature");
-        await askAILimit.useFeature();
+        // Extract highlighted mistakes and corrected text
+        highlightedMistakes.value = jsonResponse["explanation"];
+
+        highlightedMistakes.value =
+            await filterResponse(highlightedMistakes.value);
+        log("Higlighted mistakes:     \n $highlightedMistakes");
+        correctedText.value = jsonResponse["correctedText"];
+
+        correctedText.value = await filterResponse(correctedText.value);
+        log("corrected text:     \n $correctedText");
+        filterText.value = correctedText.value;
+
+        if (filterText.value.isNotEmpty) {
+          outputText.value = filterText.value;
+          isresultLoaded.value = true;
+          isCopyOutput.value = true;
+          log("true! use feature");
+          await askAILimit.useFeature();
+
+          Future.delayed(
+            Duration(seconds: 3),
+            () async {
+              if (await inAppReview.isAvailable()) {
+                inAppReview.requestReview();
+              }
+            },
+          );
+        } else {
+          isresultLoaded.value = false;
+          outputText.value = '';
+        }
       } else {
-        isresultLoaded.value = false;
-        outputText.value = '';
+        log("incorrect output");
+        // showToast(context, "Invalid Response, try again");
+        // Handle the case where the response is not valid JSON
+        // showToast(context, 'Invalid response format from the API');
+        outputText.value = ""; // Optionally set the raw response
       }
     } catch (e) {
       // Handle any errors that occur during the API call or JSON parsing
@@ -137,36 +205,95 @@ provided text:\n
     return "";
   }
 
+  // Future<String> sendQuery2(
+  //     BuildContext context, TokenLimitService askAILimit) async {
+  //   speech.stop();
+  //   outputText.value = '';
+  //   isresultLoaded.value = false;
+
+  //   if (controller.value.text.isEmpty) {
+  //     showToast(context, 'Message cannot be empty');
+  //     return '';
+  //   }
+
+  //   isloading.value = true;
+  //   var finalText = "$aiGuidlines  ${controller.value.text}";
+  //   log(finalText);
+
+  //   try {
+  //     final res = await APIs.makeGeminiRequest(finalText);
+  //     log(res);
+
+  //     // You can now set the outputText to include both parts separately
+
+  //     outputText.value = await filterResponse(res);
+
+  //     filterText.value = moreFilterResponse(outputText.value);
+  //     log("filertred text${filterText.value}");
+
+  //     if (outputText.value.isNotEmpty) {
+  //       isresultLoaded.value = true;
+  //       isCopyOutput.value = true;
+  //       log("true! use feature");
+  //       await askAILimit.useFeature();
+
+  //       Future.delayed(
+  //         Duration(seconds: 3),
+  //         () async {
+  //           if (await inAppReview.isAvailable()) {
+  //             inAppReview.requestReview();
+  //           }
+  //         },
+  //       );
+  //     } else {
+  //       isresultLoaded.value = false;
+  //       outputText.value = '';
+  //     }
+  //   } catch (e) {
+  //     // Handle any errors that occur during the API call or JSON parsing
+  //     log('Error: $e');
+  //   } finally {
+  //     // outputText.value = ""; // Optionally set the raw response
+  //     isloading.value = false;
+  //     Navigator.of(context).pop(); // Close the loading dialog
+  //   }
+
+  //   return "";
+  // }
+
   //listen voice
   void listen() async {
     if (!isListening.value) {
       try {
         available.value = await speech.initialize(
-          onStatus: (val) {
-            log('onStatus: $val');
-            if (val == "notListening" || val == "done") {
+            onStatus: (val) {
+              log('onStatus: $val');
+              if (val == "notListening" || val == "done") {
+                isListening.value = false;
+              } else if (val == "listening") {
+                isListening.value = true;
+              }
+            },
+            onError: (val) {
+              log('onError: $val');
               isListening.value = false;
-            } else if (val == "listening") {
-              isListening.value = true;
-            }
-          },
-          onError: (val) {
-            log('onError: $val');
-            isListening.value = false;
-            // Get.snackbar(
-            //   'Error',
-            //   'An error occurred: ${val.errorMsg}',
-            //   snackPosition: SnackPosition.BOTTOM,
-            // );
-          },
-        );
+              // Get.snackbar(
+              //   'Error',
+              //   'An error occurred: ${val.errorMsg}',
+              //   snackPosition: SnackPosition.BOTTOM,
+              // );
+            },
+            finalTimeout: Duration(seconds: 5));
         if (available.value) {
           isListening.value = true;
           await speech.listen(
             listenFor: const Duration(seconds: 15),
-            pauseFor: const Duration(seconds: 15),
+            pauseFor: const Duration(seconds: 5),
             onResult: (val) {
               controller.value.text = val.recognizedWords;
+              val.recognizedWords.length < 1000
+                  ? charCount.value = val.recognizedWords.length
+                  : charCount.value = 1000;
             },
           );
         }
@@ -182,6 +309,16 @@ provided text:\n
     } else {
       isListening.value = false;
       speech.stop();
+    }
+  }
+
+  // Helper function to check if a string is valid JSON
+  bool _isValidJson(String str) {
+    try {
+      jsonDecode(str);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

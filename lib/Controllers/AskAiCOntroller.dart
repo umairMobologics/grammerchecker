@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:grammer_checker_app/API/api.dart';
+import 'package:grammer_checker_app/API/apiResponse.dart';
 import 'package:grammer_checker_app/Controllers/limitedTokens/limitedTokens.dart';
 import 'package:grammer_checker_app/utils/filertAiResponse.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -16,6 +16,8 @@ class AskAiController extends GetxController {
   RxBool isresultLoaded = false.obs;
   RxInt charCount = 0.obs;
   RxBool isloading = false.obs;
+  RxString isCopyLength = ''.obs;
+  RxBool isCopyOutput = false.obs;
 
   void clearText() {
     controller.value.text = '';
@@ -45,6 +47,7 @@ class AskAiController extends GetxController {
       log(outputText.value);
       if (outputText.value.isNotEmpty) {
         isresultLoaded.value = true;
+        isCopyOutput.value = true;
         log("true! use feature");
         await askAILimit.useFeature();
         Future.delayed(
@@ -90,33 +93,34 @@ class AskAiController extends GetxController {
     if (!isListening.value) {
       try {
         available.value = await speech.initialize(
-          onStatus: (val) {
-            log('onStatus: $val');
-            if (val == "notListening" || val == "done") {
+            onStatus: (val) {
+              log('onStatus: $val');
+              if (val == "notListening" || val == "done") {
+                isListening.value = false;
+              } else if (val == "listening") {
+                isListening.value = true;
+              }
+            },
+            onError: (val) {
+              log('onError: $val');
               isListening.value = false;
-            } else if (val == "listening") {
-              isListening.value = true;
-            }
-          },
-          onError: (val) {
-            log('onError: $val');
-            isListening.value = false;
-            // Get.snackbar(
-            //   'Error',
-            //   'An error occurred: ${val.errorMsg}',
-            //   snackPosition: SnackPosition.BOTTOM,
-            // );
-          },
-        );
-
+              // Get.snackbar(
+              //   'Error',
+              //   'An error occurred: ${val.errorMsg}',
+              //   snackPosition: SnackPosition.BOTTOM,
+              // );
+            },
+            finalTimeout: Duration(seconds: 5));
         if (available.value) {
           isListening.value = true;
           await speech.listen(
-            onDevice: false,
             listenFor: const Duration(seconds: 15),
             pauseFor: const Duration(seconds: 15),
             onResult: (val) {
               controller.value.text = val.recognizedWords;
+              val.recognizedWords.length < 1000
+                  ? charCount.value = val.recognizedWords.length
+                  : charCount.value = 1000;
             },
           );
         }

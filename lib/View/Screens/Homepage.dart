@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:grammer_checker_app/Controllers/limitedTokens/limitedTokens.dart';
 import 'package:grammer_checker_app/Helper/AdsHelper/AdHelper.dart';
 import 'package:grammer_checker_app/Helper/AdsHelper/AppOpenAdManager.dart';
 import 'package:grammer_checker_app/View/Screens/BottomNav/BottomNavScreen.dart';
@@ -14,6 +15,8 @@ import 'package:grammer_checker_app/View/Widgets/FeaturedCard.dart';
 import 'package:grammer_checker_app/main.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/customTextStyle.dart';
+
+final TokenLimitService askAILimit = TokenLimitService(featureName: 'limits');
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -32,8 +35,7 @@ class _HomepageState extends State<Homepage> {
 //     if (nativeAd3 == null) {
 //       nativeAd3 ??= await ads.loadNativeAd();
 //     }
-//   }
-// load ad
+//   }// load ad
   NativeAd? nativeAd3;
   bool isAdLoaded = false;
   loadNativeAd() async {
@@ -41,19 +43,25 @@ class _HomepageState extends State<Homepage> {
       nativeAd3 = NativeAd(
         factoryId: "small",
         adUnitId: AdHelper.nativeAd,
-        listener: NativeAdListener(
-            onAdLoaded: (ad) {
-              setState(() {
-                isAdLoaded = true;
-              });
-            },
-            onAdFailedToLoad: (ad, error) {}),
+        listener: NativeAdListener(onAdLoaded: (ad) {
+          setState(() {
+            isAdLoaded = true;
+          });
+        }, onAdFailedToLoad: (ad, error) {
+          setState(() {
+            isAdLoaded = false;
+            nativeAd3 = null;
+          });
+        }),
         request: const AdRequest(),
       );
 
       nativeAd3!.load();
     } catch (e, stackTrace) {
-      nativeAd3 = null;
+      setState(() {
+        isAdLoaded = false;
+        nativeAd3 = null;
+      });
       log('Error loading ad: $e');
       FirebaseCrashlytics.instance.recordError(e, stackTrace);
     }
@@ -72,6 +80,7 @@ class _HomepageState extends State<Homepage> {
         loadNativeAd();
       }
     });
+    FirebaseAnalytics.instance.logScreenView(screenName: "home page");
   }
 
   void disposeAd() {
@@ -88,15 +97,6 @@ class _HomepageState extends State<Homepage> {
     // TODO: implement dispose
     disposeAd();
     super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // add setCurrentScreeninstead of initState because might not always give you the
-    // expected results because initState() is called before the widget
-    // is fully initialized, so the screen might not be visible yet.
-    FirebaseAnalytics.instance.logScreenView(screenName: "home page");
   }
 
   @override
@@ -258,6 +258,12 @@ class _HomepageState extends State<Homepage> {
                           ),
                         ],
                       ),
+                      // TextButton(
+                      //     onPressed: () {
+                      //       GoogleGenerativeServices.getText(
+                      //           "hi,write me a love  letter dangerous terorists");
+                      //     },
+                      //     child: Text("new api test"))
                     ],
                   ),
                 ),

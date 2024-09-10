@@ -11,6 +11,8 @@ class CorrecterContainerBox extends StatelessWidget {
   final Widget icon;
   final VoidCallback? onCopyPressed;
   final VoidCallback? onSpeakPressed;
+  final VoidCallback? onSharePressed;
+  final VoidCallback? onExplainPressed;
 
   final TextStyle style;
   final TTSController ttsController;
@@ -24,6 +26,8 @@ class CorrecterContainerBox extends StatelessWidget {
     required this.style,
     required this.originalText,
     required this.outputText,
+    this.onSharePressed,
+    this.onExplainPressed,
   });
 
   @override
@@ -112,15 +116,38 @@ class CorrecterContainerBox extends StatelessWidget {
                   ],
                 ),
                 SizedBox(width: mq.width * 0.01),
-                onCopyPressed != null
-                    ? InkWell(
-                        onTap: onCopyPressed,
-                        child: SvgPicture.asset(
-                          "assets/Icons/copy.svg",
-                          height: mq.height * 0.040,
-                        ),
-                      )
-                    : const SizedBox()
+                Row(
+                  children: [
+                    InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: onExplainPressed ?? () {},
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'See explanation',
+                            style: TextStyle(color: mainClr),
+                          ),
+                        )),
+                    onCopyPressed != null
+                        ? InkWell(
+                            onTap: onCopyPressed,
+                            child: SvgPicture.asset(
+                              "assets/Icons/copy.svg",
+                              height: mq.height * 0.040,
+                            ),
+                          )
+                        : const SizedBox(),
+                    onSharePressed != null
+                        ? InkWell(
+                            onTap: onSharePressed,
+                            child: SvgPicture.asset(
+                              "assets/Icons/share.svg",
+                              height: mq.height * 0.045,
+                            ),
+                          )
+                        : const SizedBox(),
+                  ],
+                )
               ],
             ),
           ],

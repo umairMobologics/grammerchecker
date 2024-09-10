@@ -10,9 +10,7 @@ import 'package:grammer_checker_app/Controllers/InAppPurchases/inappPurchaseCont
 import 'package:grammer_checker_app/Controllers/PremiumFeatureController.dart';
 import 'package:grammer_checker_app/View/Screens/BottomNav/BottomNavScreen.dart';
 import 'package:grammer_checker_app/View/Screens/InAppSubscription/SubscriptionInfoScreen.dart';
-import 'package:grammer_checker_app/View/Screens/Onboarding/OnboardingScreen.dart';
 import 'package:grammer_checker_app/View/Widgets/PricePlanCard.dart';
-import 'package:grammer_checker_app/main.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/snackbar.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -28,14 +26,18 @@ class PremiumScreen extends StatefulWidget {
 
 class _PremiumScreenState extends State<PremiumScreen> {
   InAppPurchaseController controller =
-      Get.put(InAppPurchaseController(InAppPurchase.instance));
-  final premiumC = Get.put(PremiumFeatureController());
+      Get.put(InAppPurchaseController(InAppPurchase.instance), permanent: true);
+  final premiumC = Get.put(PremiumFeatureController(), permanent: true);
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    controller.getData();
+    if (controller.productDetailsList.isEmpty) {
+      controller.getData();
+    } else {
+      log("data already exists*****");
+    }
   }
 
   @override
@@ -97,11 +99,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                               borderRadius: BorderRadius.circular(100),
                               onTap: () {
                                 if (widget.isSplash) {
-                                  if (initScreen == 0 || initScreen == null) {
-                                    Get.to(() => OnboardingScreen());
-                                  } else {
-                                    Get.off(() => BottomNavBarScreen());
-                                  }
+                                  Get.off(() => BottomNavBarScreen());
                                 } else {
                                   Get.back();
                                 }

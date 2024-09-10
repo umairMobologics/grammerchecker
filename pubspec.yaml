@@ -63,6 +63,8 @@ dependencies:
   logging: ^1.2.0
   url_launcher: ^6.3.0
   in_app_review: ^2.0.9
+  device_preview: ^1.2.0
+  google_generative_ai: ^0.4.6
   # diff_match_patch: ^0.4.1
  
 

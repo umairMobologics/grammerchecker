@@ -123,9 +123,9 @@ class TranslatorController extends GetxController {
   // Define variables to store selected languages and language codes
   final InAppReview inAppReview = InAppReview.instance;
   RxString sourceLanguageCode = 'en'.obs;
-  RxString targetLanguageCode = 'ur'.obs;
+  RxString targetLanguageCode = 'fr'.obs;
   RxString sourceLanguage = 'English'.obs;
-  RxString targetLanguage = 'Urdu'.obs;
+  RxString targetLanguage = 'French'.obs;
   void switchLanguages() {
     RxString temp = sourceLanguage.value.obs;
     sourceLanguage.value = targetLanguage.value;
@@ -143,6 +143,8 @@ class TranslatorController extends GetxController {
   RxBool isloading = false.obs;
   RxString highlightedMistakes = ''.obs;
   RxString correctedText = ''.obs;
+  RxString isCopyLength = ''.obs;
+  RxBool isCopyOutput = false.obs;
 
   void clearText() {
     controller.value.text = '';
@@ -180,6 +182,7 @@ class TranslatorController extends GetxController {
       outputText.value = translation.toString();
       log(outputText.value);
       isresultLoaded.value = true;
+      isCopyOutput.value = true;
       Future.delayed(
         Duration(seconds: 3),
         () async {
@@ -210,24 +213,24 @@ class TranslatorController extends GetxController {
     if (!isListening.value) {
       try {
         available.value = await speech.initialize(
-          onStatus: (val) {
-            log('onStatus: $val');
-            if (val == "notListening" || val == "done") {
+            onStatus: (val) {
+              log('onStatus: $val');
+              if (val == "notListening" || val == "done") {
+                isListening.value = false;
+              } else if (val == "listening") {
+                isListening.value = true;
+              }
+            },
+            onError: (val) {
+              log('onError: $val');
               isListening.value = false;
-            } else if (val == "listening") {
-              isListening.value = true;
-            }
-          },
-          onError: (val) {
-            log('onError: $val');
-            isListening.value = false;
-            // Get.snackbar(
-            //   'Error',
-            //   'An error occurred: ${val.errorMsg}',
-            //   snackPosition: SnackPosition.BOTTOM,
-            // );
-          },
-        );
+              // Get.snackbar(
+              //   'Error',
+              //   'An error occurred: ${val.errorMsg}',
+              //   snackPosition: SnackPosition.BOTTOM,
+              // );
+            },
+            finalTimeout: Duration(seconds: 5));
         if (available.value) {
           isListening.value = true;
           await speech.listen(
@@ -235,6 +238,9 @@ class TranslatorController extends GetxController {
             pauseFor: const Duration(seconds: 15),
             onResult: (val) {
               controller.value.text = val.recognizedWords;
+              val.recognizedWords.length < 1000
+                  ? charCount.value = val.recognizedWords.length
+                  : charCount.value = 1000;
             },
           );
         }

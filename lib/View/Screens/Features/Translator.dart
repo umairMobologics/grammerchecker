@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -36,7 +35,7 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
   final TranslatorController textController = Get.put(TranslatorController());
   final TTSController ttsController = Get.put(TTSController());
   final ScrollController _scrollController = ScrollController();
-  // // load ad
+  // load ad
   NativeAd? nativeAd3;
   bool isAdLoaded = false;
   loadNativeAd() async {
@@ -44,25 +43,39 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
       nativeAd3 = NativeAd(
         factoryId: "small",
         adUnitId: AdHelper.nativeAd,
-        listener: NativeAdListener(
-            onAdLoaded: (ad) {
-              setState(() {
-                isAdLoaded = true;
-              });
-            },
-            onAdFailedToLoad: (ad, error) {}),
+        listener: NativeAdListener(onAdLoaded: (ad) {
+          setState(() {
+            isAdLoaded = true;
+          });
+        }, onAdFailedToLoad: (ad, error) {
+          setState(() {
+            isAdLoaded = false;
+            nativeAd3 = null;
+          });
+        }),
         request: const AdRequest(),
       );
 
       nativeAd3!.load();
     } catch (e, stackTrace) {
-      nativeAd3 = null;
+      setState(() {
+        isAdLoaded = false;
+        nativeAd3 = null;
+      });
       log('Error loading ad: $e');
       FirebaseCrashlytics.instance.recordError(e, stackTrace);
     }
   }
+  // var ads = Get.put(AdController());
+  // NativeAd? nativeAd3;
 
-//load ad
+  // void loadNative() async {
+  //   if (nativeAd3 == null) {
+  //     nativeAd3 ??= await loadNativeAd();
+  //   }
+  // }
+
+  //load ad
   BannerAd? bannerAd;
   bool isLoaded = false;
 
@@ -86,6 +99,10 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
             debugPrint('BannerAd failed to load: $err');
             // Dispose the ad here to free resources.
             ad.dispose();
+            setState(() {
+              isLoaded = false;
+              bannerAd = null;
+            });
           },
           // Called when an ad opens an overlay that covers the screen.
           onAdOpened: (Ad ad) {},
@@ -96,7 +113,10 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
         ),
       )..load();
     } catch (e, stackTrace) {
-      bannerAd = null;
+      setState(() {
+        isLoaded = false;
+        bannerAd = null;
+      });
       log('Error loading ad: $e');
       FirebaseCrashlytics.instance.recordError(e, stackTrace);
     }
@@ -114,16 +134,17 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
     // Listen for changes in isresultLoaded
 
     PermissionHandler.requestPermissions();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) {
-        if (InterstitialAdClass.interstitialAd == null) {
-          InterstitialAdClass.createInterstitialAd();
-        }
-        if (nativeAd3 == null) {
-          loadNativeAd();
-        }
-      },
-    );
+
+    if (InterstitialAdClass.interstitialAd == null) {
+      InterstitialAdClass.createInterstitialAd();
+    }
+    if (nativeAd3 == null) {
+      loadNativeAd();
+    }
+    if (bannerAd == null) {
+      loadAd();
+    }
+    FirebaseAnalytics.instance.logScreenView(screenName: "Translator Screen");
     textController.isresultLoaded.listen((isLoaded) {
       if (isLoaded) {
         // Scroll to the bottom after the first frame is built
@@ -165,310 +186,325 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // add setCurrentScreeninstead of initState because might not always give you the
-    // expected results because initState() is called before the widget
-    // is fully initialized, so the screen might not be visible yet.
-    if (bannerAd == null) {
-      loadAd();
-    }
-    FirebaseAnalytics.instance.logScreenView(screenName: "Translator Screen");
-  }
-
-  @override
   Widget build(BuildContext context) {
     var mq = MediaQuery.of(context).size;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: white,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              controller: _scrollController,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "translator".tr,
-                            style: customTextStyle(
-                                fontSize: mq.height * 0.028,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          InkWell(
-                              onTap: () {
-                                if (textController
-                                    .outputText.value.isNotEmpty) {
-                                  InterstitialAdClass.count += 1;
-                                  if (InterstitialAdClass.count ==
-                                          InterstitialAdClass.totalLimit &&
-                                      (!Subscriptioncontroller
-                                              .isMonthlypurchased.value &&
-                                          !Subscriptioncontroller
-                                              .isYearlypurchased.value)) {
-                                    InterstitialAdClass.showInterstitialAd(
-                                        context);
-                                  }
-
-                                  shareText(textController.outputText.value);
-                                } else {
-                                  showToast(context, "Nothing to share");
-                                }
-                              },
-                              child: SvgPicture.asset("assets/Icons/share.svg"))
-                        ],
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: SafeArea(
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                controller: _scrollController,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "translator".tr,
+                              style: customTextStyle(
+                                  fontSize: mq.height * 0.028,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: mq.height * 0.01),
-                    Obx(
-                      () => Row(
-                        children: [
-                          CustomDropdown(
-                            items: textController.languageCodes.keys
-                                .map<PopupMenuItem<String>>((String key) {
-                              return PopupMenuItem<String>(
-                                value: key,
-                                child: Text(key),
-                              );
-                            }).toList(),
-                            selectedValue: textController.sourceLanguage.value,
-                            onChanged: (String? newValue) {
-                              textController.sourceLanguage.value = newValue!;
-                              // Update the source language code based on the selected language
-                              textController.sourceLanguageCode.value =
-                                  textController.languageCodes[
-                                          textController.sourceLanguage] ??
-                                      'en';
-                              log(textController.sourceLanguageCode.value);
-                            },
-                          ),
-                          InkWell(
-                            borderRadius: BorderRadius.circular(60),
-                            onTap: () {
-                              textController.switchLanguages();
-                            },
-                            child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: 20,
-                              child: SvgPicture.asset(
-                                "assets/Icons/swap.svg",
-                                height: mq.height * 0.03,
-                                color: mainClr,
+                      SizedBox(height: mq.height * 0.01),
+                      Obx(
+                        () => Row(
+                          children: [
+                            CustomDropdown(
+                              items: textController.languageCodes.keys
+                                  .map<PopupMenuItem<String>>((String key) {
+                                return PopupMenuItem<String>(
+                                  value: key,
+                                  child: Text(key),
+                                );
+                              }).toList(),
+                              selectedValue:
+                                  textController.sourceLanguage.value,
+                              onChanged: (String? newValue) {
+                                textController.sourceLanguage.value = newValue!;
+                                // Update the source language code based on the selected language
+                                textController.sourceLanguageCode.value =
+                                    textController.languageCodes[
+                                            textController.sourceLanguage] ??
+                                        'en';
+                                log(textController.sourceLanguageCode.value);
+                              },
+                            ),
+                            InkWell(
+                              borderRadius: BorderRadius.circular(60),
+                              onTap: () {
+                                textController.switchLanguages();
+                              },
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 20,
+                                child: SvgPicture.asset(
+                                  "assets/Icons/swap.svg",
+                                  height: mq.height * 0.03,
+                                  color: mainClr,
+                                ),
                               ),
                             ),
-                          ),
-                          CustomDropdown(
-                            items: textController.languageCodes.keys
-                                .map<PopupMenuItem<String>>((String key) {
-                              return PopupMenuItem<String>(
-                                value: key,
-                                child: Text(key),
-                              );
-                            }).toList(),
-                            selectedValue: textController.targetLanguage.value,
-                            onChanged: (String? newValue) {
-                              textController.targetLanguage.value = newValue!;
-                              // Update the source language code based on the selected language
-                              textController.targetLanguageCode.value =
-                                  textController.languageCodes[
-                                          textController.targetLanguage] ??
-                                      'en';
-                              log(textController.targetLanguage.value);
-                            },
-                          ),
-                        ],
+                            CustomDropdown(
+                              items: textController.languageCodes.keys
+                                  .map<PopupMenuItem<String>>((String key) {
+                                return PopupMenuItem<String>(
+                                  value: key,
+                                  child: Text(key),
+                                );
+                              }).toList(),
+                              selectedValue:
+                                  textController.targetLanguage.value,
+                              onChanged: (String? newValue) {
+                                textController.targetLanguage.value = newValue!;
+                                // Update the source language code based on the selected language
+                                textController.targetLanguageCode.value =
+                                    textController.languageCodes[
+                                            textController.targetLanguage] ??
+                                        'en';
+                                log(textController.targetLanguage.value);
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: mq.height * 0.02),
-                    Obx(
-                      () => CustomInputContainer(
-                        hintText: textController.isListening.value
-                            ? "listining".tr
-                            : "typehere".tr,
-                        textController: textController,
-                        onGalleryPressed: () async {
-                          // Implement gallery button functionality here
-                          if (!isOperationInProgress.value) {
-                            shouldShowOpenAd.value = false;
-                            Future<bool> result =
-                                pickImageFromGallery(textController);
-                            if (await result) {
-                            } else {
-                              log("message");
+                      SizedBox(height: mq.height * 0.02),
+                      Obx(
+                        () => CustomInputContainer(
+                          hintText: textController.isListening.value
+                              ? "listining".tr
+                              : "typehere".tr,
+                          textController: textController,
+                          onGalleryPressed: () async {
+                            FocusScope.of(context)
+                                .requestFocus(new FocusNode());
+                            textController.speech.stop();
+                            textController.isListening.value = false;
+                            if (ttsController.isSpeaking.value) {
+                              ttsController.pause();
                             }
-                          }
-                        },
-                        onCameraPressed: () async {
-                          // Listen for changes in isresultLoaded
-                          if (await PermissionHandler.checkPermissions(
-                              Permission.camera)) {
                             // Implement gallery button functionality here
                             if (!isOperationInProgress.value) {
                               shouldShowOpenAd.value = false;
                               Future<bool> result =
-                                  pickImageFromCamera(textController);
-                              if (await result) {}
-                              shouldShowOpenAd.value = true;
-                            }
-                          } else {
-                            PermissionHandler.showAlertDialog(
-                                context, 'Camera');
-                          }
-                        },
-                        onMicPressed: () async {
-                          // Listen for changes in isresultLoaded
-                          if (await PermissionHandler.checkPermissions(
-                              Permission.microphone)) {
-                            textController.listen();
-                          } else {
-                            PermissionHandler.showAlertDialog(
-                                context, 'Microphone');
-                          }
-                        },
-                        onCopyPressed: () {
-                          if (textController.controller.value.text.isNotEmpty) {
-                            Clipboard.setData(ClipboardData(
-                                text: textController.controller.value.text));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('copy'.tr),
-                              ),
-                            );
-                          }
-                          // Implement copy button functionality here
-                          log('Copy icon pressed');
-                        },
-                        onSubmitted: () {
-                          !textController.isloading.value
-                              ? () {
-                                  isSelectable.value = false;
-                                  log("hit");
-                                  textController.translateText(
-                                    context,
-                                    textController.sourceLanguageCode.value,
-                                    textController.targetLanguageCode.value,
-                                  );
-                                }
-                              : () {};
-                        },
-                      ),
-                    ),
-                    SizedBox(height: mq.height * 0.02),
-                    Obx(
-                      () => CustomButton(
-                          mq: mq,
-                          ontap: !textController.isloading.value
-                              ? () {
-                                  focusNode.unfocus();
-
-                                  if (liveInternet
-                                      .checkConnectivityResult.value) {
-                                    showNoInternetDialog(context, mq);
-                                  } else {
-                                    if (textController
-                                        .controller.value.text.isNotEmpty) {
-                                      if (InterstitialAdClass.interstitialAd !=
-                                              null &&
-                                          (!Subscriptioncontroller
-                                                  .isMonthlypurchased.value &&
-                                              !Subscriptioncontroller
-                                                  .isYearlypurchased.value)) {
-                                        InterstitialAdClass.showInterstitialAd(
-                                            context);
-                                        InterstitialAdClass.count = 0;
-                                      }
-
-                                      log("hit");
-                                      textController.translateText(
-                                        context,
-                                        textController.sourceLanguageCode.value,
-                                        textController.targetLanguageCode.value,
-                                      );
-                                      showLoadingDialog(context, mq);
-                                    } else {
-                                      showToast(context, 'empty'.tr);
-                                    }
-                                  }
-                                }
-                              : () {},
-                          text: buttontext(mq)),
-                    ),
-                    SizedBox(height: mq.height * 0.02),
-                    Obx(() => textController.isresultLoaded.value
-                        ? CustomOutputContainer(
-                            textController: textController,
-                            ttsController: ttsController,
-                            onSpeak: () {
-                              if (textController.outputText.value.isNotEmpty) {
-                                if (ttsController.isSpeaking.value) {
-                                  ttsController.pause();
-                                } else {
-                                  ttsController
-                                      .speak(textController.outputText.value);
-                                }
+                                  pickImageFromGallery(textController);
+                              if (await result) {
                               } else {
-                                log("not text");
+                                log("message");
                               }
-                            },
-                            onCopy: () {
-                              if (textController.outputText.value.isNotEmpty) {
-                                Clipboard.setData(ClipboardData(
-                                    text: textController.outputText.value));
+                            }
+                          },
+                          onCameraPressed: () async {
+                            FocusScope.of(context)
+                                .requestFocus(new FocusNode());
+                            textController.speech.stop();
+                            textController.isListening.value = false;
+                            if (ttsController.isSpeaking.value) {
+                              ttsController.pause();
+                            }
+                            // Listen for changes in isresultLoaded
+                            if (await PermissionHandler.checkPermissions(
+                                Permission.camera)) {
+                              // Implement gallery button functionality here
+                              if (!isOperationInProgress.value) {
+                                shouldShowOpenAd.value = false;
+                                Future<bool> result =
+                                    pickImageFromCamera(textController);
+                                if (await result) {}
+                                shouldShowOpenAd.value = true;
+                              }
+                            } else {
+                              PermissionHandler.showAlertDialog(
+                                  context, 'Camera');
+                            }
+                          },
+                          onMicPressed: () async {
+                            FocusScope.of(context)
+                                .requestFocus(new FocusNode());
+                            if (ttsController.isSpeaking.value) {
+                              ttsController.pause();
+                            }
+                            // Listen for changes in isresultLoaded
+                            if (await PermissionHandler.checkPermissions(
+                                Permission.microphone)) {
+                              textController.listen();
+                            } else {
+                              PermissionHandler.showAlertDialog(
+                                  context, 'Microphone');
+                            }
+                          },
+                          onCopyPressed: () {
+                            FocusScope.of(context)
+                                .requestFocus(new FocusNode());
+                            textController.speech.stop();
+                            textController.isListening.value = false;
+                            if (textController
+                                .controller.value.text.isNotEmpty) {
+                              log("copy length iss : *** ${textController.isCopyLength.value}");
+                              if (textController.controller.value.text !=
+                                  textController.isCopyLength.value) {
+                                copyToClipboard(context,
+                                    textController.controller.value.text);
+                                textController.isCopyLength.value =
+                                    textController.controller.value.text;
+                              } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text('copy'.tr),
+                                    content: Text('alreadycopy'.tr),
                                   ),
                                 );
                               }
-                            },
-                          )
-                        : const SizedBox()),
-                    SizedBox(height: mq.height * 0.03),
-                  ],
+                            }
+                            // Implement copy button functionality here
+                          },
+                          onSubmitted: () {},
+                        ),
+                      ),
+                      SizedBox(height: mq.height * 0.02),
+                      Obx(
+                        () => CustomButton(
+                            mq: mq,
+                            ontap: !textController.isloading.value
+                                ? () {
+                                    focusNode.unfocus();
+                                    textController.isListening.value = false;
+                                    if (liveInternet
+                                        .checkConnectivityResult.value) {
+                                      showNoInternetDialog(context, mq);
+                                    } else {
+                                      if (textController
+                                          .controller.value.text.isNotEmpty) {
+                                        if (InterstitialAdClass
+                                                    .interstitialAd !=
+                                                null &&
+                                            (!Subscriptioncontroller
+                                                    .isMonthlypurchased.value &&
+                                                !Subscriptioncontroller
+                                                    .isYearlypurchased.value)) {
+                                          InterstitialAdClass
+                                              .showInterstitialAd(context);
+                                          InterstitialAdClass.count = 0;
+                                        }
+
+                                        log("hit");
+                                        textController.translateText(
+                                          context,
+                                          textController
+                                              .sourceLanguageCode.value,
+                                          textController
+                                              .targetLanguageCode.value,
+                                        );
+                                        showLoadingDialog(context, mq);
+                                      } else {
+                                        showToast(context, 'empty'.tr);
+                                      }
+                                    }
+                                  }
+                                : () {},
+                            text: buttontext(mq)),
+                      ),
+                      SizedBox(height: mq.height * 0.02),
+                      Obx(
+                        () => textController.isresultLoaded.value
+                            ? CustomOutputContainer(
+                                textController: textController,
+                                ttsController: ttsController,
+                                onSpeak: () {
+                                  textController.speech.stop();
+                                  textController.isListening.value = false;
+                                  if (textController
+                                      .outputText.value.isNotEmpty) {
+                                    if (ttsController.isSpeaking.value) {
+                                      ttsController.pause();
+                                    } else {
+                                      ttsController.speak(
+                                          textController.outputText.value);
+                                    }
+                                  } else {
+                                    log("not text");
+                                  }
+                                },
+                                onCopy: () {
+                                  if (textController
+                                          .outputText.value.isNotEmpty &&
+                                      textController.isCopyOutput.value) {
+                                    copyToClipboard(context,
+                                        textController.outputText.value);
+                                    textController.isCopyOutput.value = false;
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('alreadycopy'.tr),
+                                      ),
+                                    );
+                                  }
+                                },
+                                onSharePressed: () {
+                                  if (ttsController.isSpeaking.value) {
+                                    ttsController.pause();
+                                  }
+                                  if (textController
+                                      .outputText.value.isNotEmpty) {
+                                    shareText(textController.outputText.value);
+                                  }
+                                },
+                              )
+                            : SizedBox(
+                                height: mq.height * 0.2,
+                              ),
+                      ),
+                      SizedBox(height: mq.height * 0.02),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    height: 10,
-                    color: white,
-                  ),
-                  Obx(() => !textController.isresultLoaded.value
-                      ? isAdLoaded &&
-                              nativeAd3 != null &&
-                              !InterstitialAdClass.isInterAddLoaded.value &&
-                              !AppOpenAdManager.isOpenAdLoaded.value &&
-                              (!Subscriptioncontroller
-                                      .isMonthlypurchased.value &&
-                                  !Subscriptioncontroller
-                                      .isYearlypurchased.value)
-                          ? Container(
-                              decoration: BoxDecoration(
-                                  color: white,
-                                  border: Border.all(color: black)),
-                              height: 150,
-                              width: double.infinity,
-                              child: AdWidget(ad: nativeAd3!))
-                          : const SizedBox()
-                      : const SizedBox()),
-                ],
-              ),
-            )
-          ],
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      height: 10,
+                      color: white,
+                    ),
+                    Obx(() => !textController.isresultLoaded.value
+                        ? isAdLoaded &&
+                                nativeAd3 != null &&
+                                !InterstitialAdClass.isInterAddLoaded.value &&
+                                !AppOpenAdManager.isOpenAdLoaded.value &&
+                                (!Subscriptioncontroller
+                                        .isMonthlypurchased.value &&
+                                    !Subscriptioncontroller
+                                        .isYearlypurchased.value)
+                            ? Container(
+                                decoration: BoxDecoration(
+                                    color: white,
+                                    border: Border.all(color: black)),
+                                height: 150,
+                                width: double.infinity,
+                                child: AdWidget(ad: nativeAd3!))
+                            : const SizedBox()
+                        : const SizedBox()),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: StatefulBuilder(builder: (context, setState) {

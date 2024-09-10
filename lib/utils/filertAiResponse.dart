@@ -1,6 +1,6 @@
 String filterResponse(String response) {
   // Remove lines containing only asterisks
-  String filteredResponse = response.replaceAll('*', '');
+  String filteredResponse = response.replaceAll('*', '').replaceAll("**", "");
 
   return filteredResponse;
 }

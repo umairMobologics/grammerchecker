@@ -43,18 +43,14 @@ class _CustomInputContainerState extends State<CustomInputContainer> {
 
     return GestureDetector(
       onTap: () {
-        if (FocusScope.of(context).hasFocus) {
-          FocusScope.of(context).unfocus();
-        } else {
-          FocusScope.of(context).requestFocus(focusNode);
-        }
+        FocusScope.of(context).requestFocus(new FocusNode());
       },
       child: Material(
         borderRadius: BorderRadius.circular(15),
         elevation: 2,
         shadowColor: mainClr,
         child: Container(
-          height: mq.height * 0.30,
+          height: 250,
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -74,7 +70,7 @@ class _CustomInputContainerState extends State<CustomInputContainer> {
                               : const EdgeInsets.all(0),
                           child: TextField(
                             focusNode: focusNode,
-                            maxLines: 8,
+                            maxLines: 10,
                             minLines: 1,
 
                             // onSubmitted: textController.updateText,
@@ -171,8 +167,10 @@ class _CustomInputContainerState extends State<CustomInputContainer> {
                                   animate:
                                       widget.textController.isListening.value,
                                   glowColor: mainClr,
-                                  // endRadius: 75.0,
-                                  // glowBorderRadius: BorderRadius.circular(75),
+                                  // glowBorderRadius: BorderRadius.circular(20),
+                                  glowRadiusFactor: 0.3,
+                                  // glowBorderRadius: BorderRadius.circular(20),
+                                  glowShape: BoxShape.circle,
                                   duration: const Duration(milliseconds: 2000),
                                   // repeatPauseDuration: const Duration(milliseconds: 100),
 
@@ -223,13 +221,15 @@ class CustomOutputContainer extends StatefulWidget {
       this.textController,
       this.ttsController,
       this.onSpeak,
-      this.onCopy});
+      this.onCopy,
+      this.onSharePressed});
   // ignore: prefer_typing_uninitialized_variables
   final textController;
   // ignore: prefer_typing_uninitialized_variables
   final ttsController;
   final VoidCallback? onSpeak;
   final VoidCallback? onCopy;
+  final VoidCallback? onSharePressed;
 
   @override
   State<CustomOutputContainer> createState() => _CustomOutputContainerState();
@@ -253,7 +253,7 @@ class _CustomOutputContainerState extends State<CustomOutputContainer> {
       elevation: 2,
       shadowColor: mainClr,
       child: Container(
-        height: mq.height * 0.3,
+        height: 250,
         padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -266,9 +266,9 @@ class _CustomOutputContainerState extends State<CustomOutputContainer> {
           children: [
             Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 child: SizedBox(
-                  height: mq.height * 0.20,
+                  height: 190,
                   //  color: red,
                   child: Obx(
                     () => isSelectable.value
@@ -366,13 +366,25 @@ class _CustomOutputContainerState extends State<CustomOutputContainer> {
                   ],
                 ),
                 SizedBox(width: mq.width * 0.01),
-                InkWell(
-                  onTap: widget.onCopy ?? () {},
-                  child: SvgPicture.asset(
-                    "assets/Icons/copy.svg",
-                    height: mq.height * 0.045,
-                  ),
-                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: widget.onCopy ?? () {},
+                      child: SvgPicture.asset(
+                        "assets/Icons/copy.svg",
+                        height: mq.height * 0.045,
+                      ),
+                    ),
+                    SizedBox(width: mq.width * 0.01),
+                    InkWell(
+                        onTap: widget.onSharePressed ?? () {},
+                        child: SvgPicture.asset(
+                          "assets/Icons/share.svg",
+                          height: mq.height * 0.045,
+                        ))
+                  ],
+                )
               ],
             ),
           ],

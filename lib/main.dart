@@ -85,11 +85,7 @@ Future main() async {
     // builder: (context) =>  MyApp(savedLocale: savedLocale)),
     // ); // Wrap your app
 
-    runApp(
-      MyApp(
-        savedLocale: savedLocale,
-      ), // Wrap your app
-    );
+    runApp(MyApp(savedLocale: savedLocale));
   });
 }
 
