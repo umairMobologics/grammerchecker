@@ -7,11 +7,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:grammer_checker_app/Controllers/SplashAnimation.dart';
+import 'package:grammer_checker_app/Firebase/FirebaseService.dart';
 import 'package:grammer_checker_app/Helper/AdsHelper/AdHelper.dart';
 import 'package:grammer_checker_app/View/Screens/BottomNav/BottomNavScreen.dart';
 import 'package:grammer_checker_app/View/Screens/InAppSubscription/PremiumFeatureScreen.dart';
 import 'package:grammer_checker_app/View/Screens/Onboarding/OnboardingScreen.dart';
 import 'package:grammer_checker_app/main.dart';
+import 'package:grammer_checker_app/utils/ShimarEffectAD.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/customTextStyle.dart';
 
@@ -151,6 +153,11 @@ class _SplashScreenState extends State<SplashScreen>
                       () => animation.splashScreenButtonShown.value
                           ? InkWell(
                               onTap: () {
+                                // await QuizCompletionStatus.markQuiz();
+                                FetchQuizDataController()
+                                    .initializeQuizQuestions();
+                                // FetchQuizDataController().refreshQuizData();
+
                                 if (initScreen == 0 || initScreen == null) {
                                   Get.to(() => OnboardingScreen());
                                 } else {
@@ -214,22 +221,21 @@ class _SplashScreenState extends State<SplashScreen>
           )
         ],
       ),
-      bottomNavigationBar: Obx(
-        () => (!Subscriptioncontroller.isMonthlypurchased.value &&
-                    !Subscriptioncontroller.isYearlypurchased.value) &&
-                isAdLoaded &&
-                nativeAd3 != null
-            ? Container(
-                decoration: BoxDecoration(border: Border.all(color: black)),
-                height: 150,
-                width: double.infinity,
-                child: AdWidget(ad: nativeAd3!))
-            : Container(
-                color: Colors.transparent,
-                height: 0,
-                width: double.infinity,
-              ),
-      ),
+      bottomNavigationBar: Obx(() => (!Subscriptioncontroller
+                      .isMonthlypurchased.value &&
+                  !Subscriptioncontroller.isYearlypurchased.value) &&
+              isAdLoaded &&
+              nativeAd3 != null
+          ? Container(
+              decoration:
+                  BoxDecoration(color: white, border: Border.all(color: black)),
+              height: 150,
+              width: double.infinity,
+              child: AdWidget(ad: nativeAd3!))
+          : (Subscriptioncontroller.isMonthlypurchased.value ||
+                  Subscriptioncontroller.isYearlypurchased.value)
+              ? SizedBox()
+              : ShimmarrNativeSmall(mq: mq, height: 135)),
       // bottomNavigationBar: Obx(
       //   () => ads.isLoaded.value &&
       //           !InterstitialAdClass.isInterAddLoaded.value &&

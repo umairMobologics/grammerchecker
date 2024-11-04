@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:grammer_checker_app/Controllers/InAppPurchases/inappPurchaseController.dart';
+import 'package:grammer_checker_app/Controllers/QuizController.dart';
 import 'package:grammer_checker_app/Helper/RemoteConfig/remoteConfigs.dart';
 import 'package:grammer_checker_app/Helper/checkInternetConnectivity.dart';
 import 'package:grammer_checker_app/Localization/Languages.dart';
@@ -32,6 +33,8 @@ Future<Locale?> getSavedLocale() async {
   return null;
 }
 
+final StartQuizController quizController =
+    Get.put(StartQuizController(), permanent: true);
 final liveInternet = Get.put(NetworkController(), permanent: true);
 InAppPurchaseController Subscriptioncontroller =
     Get.put(InAppPurchaseController(InAppPurchase.instance), permanent: true)

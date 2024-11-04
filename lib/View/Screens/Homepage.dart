@@ -9,10 +9,11 @@ import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:grammer_checker_app/Controllers/limitedTokens/limitedTokens.dart';
 import 'package:grammer_checker_app/Helper/AdsHelper/AdHelper.dart';
-import 'package:grammer_checker_app/Helper/AdsHelper/AppOpenAdManager.dart';
 import 'package:grammer_checker_app/View/Screens/BottomNav/BottomNavScreen.dart';
+import 'package:grammer_checker_app/View/Screens/quiz/quiz_screen.dart';
 import 'package:grammer_checker_app/View/Widgets/FeaturedCard.dart';
 import 'package:grammer_checker_app/main.dart';
+import 'package:grammer_checker_app/utils/ShimarEffectAD.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/customTextStyle.dart';
 
@@ -150,137 +151,187 @@ class _HomepageState extends State<Homepage> {
           showExitPopup();
         },
         child: Scaffold(
-            backgroundColor: white,
-            body: SingleChildScrollView(
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          featureCard(
-                            SmallSize: false,
-                            icon: SvgPicture.asset(
-                              "assets/ob2.svg",
-                            ),
-                            onPressed: () {
-                              InterstitialAdClass.count += 1;
-                              if (InterstitialAdClass.count ==
-                                      InterstitialAdClass.totalLimit &&
-                                  (!Subscriptioncontroller
-                                          .isMonthlypurchased.value &&
-                                      !Subscriptioncontroller
-                                          .isYearlypurchased.value)) {
-                                InterstitialAdClass.showInterstitialAd(context);
-                              }
-                              page.value = 3;
-                            },
-                            text: "corrector".tr,
-                            height: mq.height * 0.20,
-                            mq: mq,
-                            width: mq.width * 0.50,
+          backgroundColor: white,
+          body: SingleChildScrollView(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        featureCard(
+                          SmallSize: false,
+                          icon: SvgPicture.asset(
+                            "assets/ob2.svg",
                           ),
-                          featureCard(
-                            SmallSize: true,
-                            icon: SvgPicture.asset(
-                              "assets/ob1.svg",
-                            ),
-                            onPressed: () {
-                              InterstitialAdClass.count += 1;
-                              if (InterstitialAdClass.count ==
-                                      InterstitialAdClass.totalLimit &&
-                                  (!Subscriptioncontroller
-                                          .isMonthlypurchased.value &&
-                                      !Subscriptioncontroller
-                                          .isYearlypurchased.value)) {
-                                InterstitialAdClass.showInterstitialAd(context);
-                              }
-                              page.value = 1;
-                            },
-                            text: "paraphrase".tr,
-                            height: mq.height * 0.20,
-                            mq: mq,
-                            width: mq.width * 0.30,
+                          onPressed: () {
+                            InterstitialAdClass.count += 1;
+                            if (InterstitialAdClass.count ==
+                                    InterstitialAdClass.totalLimit &&
+                                (!Subscriptioncontroller
+                                        .isMonthlypurchased.value &&
+                                    !Subscriptioncontroller
+                                        .isYearlypurchased.value)) {
+                              InterstitialAdClass.showInterstitialAd(context);
+                            }
+                            page.value = 3;
+                          },
+                          text: "corrector".tr,
+                        ),
+                        SizedBox(width: mq.width * 0.04),
+                        featureCard(
+                          SmallSize: true,
+                          icon: SvgPicture.asset(
+                            "assets/ob1.svg",
+                          ),
+                          onPressed: () {
+                            InterstitialAdClass.count += 1;
+                            if (InterstitialAdClass.count ==
+                                    InterstitialAdClass.totalLimit &&
+                                (!Subscriptioncontroller
+                                        .isMonthlypurchased.value &&
+                                    !Subscriptioncontroller
+                                        .isYearlypurchased.value)) {
+                              InterstitialAdClass.showInterstitialAd(context);
+                            }
+                            page.value = 1;
+                          },
+                          text: "paraphrase".tr,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: mq.height * 0.02,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        featureCard(
+                          SmallSize: true,
+                          icon: SvgPicture.asset(
+                            "assets/ob3.svg",
+                          ),
+                          onPressed: () {
+                            InterstitialAdClass.count += 1;
+                            if (InterstitialAdClass.count ==
+                                    InterstitialAdClass.totalLimit &&
+                                (!Subscriptioncontroller
+                                        .isMonthlypurchased.value &&
+                                    !Subscriptioncontroller
+                                        .isYearlypurchased.value)) {
+                              InterstitialAdClass.showInterstitialAd(context);
+                            }
+                            page.value = 4;
+                          },
+                          text: "translator".tr,
+                        ),
+                        SizedBox(width: mq.width * 0.04),
+                        featureCard(
+                          SmallSize: false,
+                          icon: SvgPicture.asset(
+                            "assets/ob4.svg",
+                          ),
+                          onPressed: () {
+                            InterstitialAdClass.count += 1;
+                            if (InterstitialAdClass.count ==
+                                    InterstitialAdClass.totalLimit &&
+                                (!Subscriptioncontroller
+                                        .isMonthlypurchased.value &&
+                                    !Subscriptioncontroller
+                                        .isYearlypurchased.value)) {
+                              InterstitialAdClass.showInterstitialAd(context);
+                            }
+                            page.value = 0;
+                          },
+                          text: "askai".tr,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: mq.height * 0.02),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: mainClr,
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            "English Grammar Test",
+                            style: customTextStyle(
+                                fontSize: mq.height * 0.025,
+                                fontWeight: FontWeight.bold,
+                                color: white),
+                          ),
+                          SizedBox(height: mq.height * 0.01),
+                          Text(
+                            "Begin the English Grammar Test to assess and improve your grammar skills.",
+                            textAlign: TextAlign.center,
+                            style: customTextStyle(
+                                // fontSize: mq.height * 0.018,
+
+                                // fontWeight: FontWeight.bold,
+                                color: white),
+                          ),
+                          SizedBox(height: mq.height * 0.02),
+                          InkWell(
+                            onTap: () => Get.to(() => QuizScreen()),
+                            child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: white,
+                                ),
+                                padding: EdgeInsets.all(12),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Let's GO",
+                                      style: customTextStyle(
+                                          fontSize: mq.height * 0.025,
+                                          fontWeight: FontWeight.bold,
+                                          color: mainClr),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: mainClr,
+                                      size: 20,
+                                    )
+                                  ],
+                                )),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: mq.height * 0.02,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          featureCard(
-                            SmallSize: true,
-                            icon: SvgPicture.asset(
-                              "assets/ob3.svg",
-                            ),
-                            onPressed: () {
-                              InterstitialAdClass.count += 1;
-                              if (InterstitialAdClass.count ==
-                                      InterstitialAdClass.totalLimit &&
-                                  (!Subscriptioncontroller
-                                          .isMonthlypurchased.value &&
-                                      !Subscriptioncontroller
-                                          .isYearlypurchased.value)) {
-                                InterstitialAdClass.showInterstitialAd(context);
-                              }
-                              page.value = 4;
-                            },
-                            text: "translator".tr,
-                            height: mq.height * 0.20,
-                            mq: mq,
-                            width: mq.width * 0.30,
-                          ),
-                          featureCard(
-                            SmallSize: false,
-                            icon: SvgPicture.asset(
-                              "assets/ob4.svg",
-                            ),
-                            onPressed: () {
-                              InterstitialAdClass.count += 1;
-                              if (InterstitialAdClass.count ==
-                                      InterstitialAdClass.totalLimit &&
-                                  (!Subscriptioncontroller
-                                          .isMonthlypurchased.value &&
-                                      !Subscriptioncontroller
-                                          .isYearlypurchased.value)) {
-                                InterstitialAdClass.showInterstitialAd(context);
-                              }
-                              page.value = 0;
-                            },
-                            text: "askai".tr,
-                            height: mq.height * 0.20,
-                            mq: mq,
-                            width: mq.width * 0.50,
-                          ),
-                        ],
-                      ),
-                      // TextButton(
-                      //     onPressed: () {
-                      //       GoogleGenerativeServices.getText(
-                      //           "hi,write me a love  letter dangerous terorists");
-                      //     },
-                      //     child: Text("new api test"))
-                    ],
-                  ),
+                    )
+                    // TextButton(
+                    //     onPressed: () {
+                    //       GoogleGenerativeServices.getText(
+                    //           "hi,write me a love  letter dangerous terorists");
+                    //     },
+                    //     child: Text("new api test"))
+                  ],
                 ),
               ),
             ),
-            bottomNavigationBar: Obx(() => !InterstitialAdClass
-                        .isInterAddLoaded.value &&
-                    !AppOpenAdManager.isOpenAdLoaded.value &&
-                    isAdLoaded &&
-                    (!Subscriptioncontroller.isMonthlypurchased.value &&
-                        !Subscriptioncontroller.isYearlypurchased.value) &&
-                    nativeAd3 != null
-                ? Container(
-                    decoration: BoxDecoration(border: Border.all(color: black)),
-                    height: 150,
-                    width: double.infinity,
-                    child: AdWidget(ad: nativeAd3!))
-                : SizedBox())));
+          ),
+          bottomNavigationBar: Obx(() =>
+              (!Subscriptioncontroller.isMonthlypurchased.value &&
+                          !Subscriptioncontroller.isYearlypurchased.value) &&
+                      isAdLoaded &&
+                      nativeAd3 != null
+                  ? Container(
+                      decoration: BoxDecoration(
+                          color: white, border: Border.all(color: black)),
+                      height: 150,
+                      width: double.infinity,
+                      child: AdWidget(ad: nativeAd3!))
+                  : (Subscriptioncontroller.isMonthlypurchased.value ||
+                          Subscriptioncontroller.isYearlypurchased.value)
+                      ? SizedBox()
+                      : ShimmarrNativeSmall(mq: mq, height: 135)),
+        ));
   }
 }

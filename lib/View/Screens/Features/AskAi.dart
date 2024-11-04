@@ -17,6 +17,7 @@ import 'package:grammer_checker_app/View/Widgets/CustomInputContainer.dart';
 import 'package:grammer_checker_app/View/Widgets/noInternetWidget.dart';
 import 'package:grammer_checker_app/main.dart';
 import 'package:grammer_checker_app/utils/LoadingDialouge.dart';
+import 'package:grammer_checker_app/utils/ShimarEffectAD.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/customTextStyle.dart';
 import 'package:grammer_checker_app/utils/permissiionHandler.dart';
@@ -511,14 +512,11 @@ class _AskAIScreenState extends State<AskAIScreen> {
                     color: white,
                   ),
                   Obx(() => !textController.isresultLoaded.value
-                      ? isAdLoaded &&
-                              nativeAd3 != null &&
-                              !InterstitialAdClass.isInterAddLoaded.value &&
-                              !AppOpenAdManager.isOpenAdLoaded.value &&
-                              (!Subscriptioncontroller
-                                      .isMonthlypurchased.value &&
+                      ? (!Subscriptioncontroller.isMonthlypurchased.value &&
                                   !Subscriptioncontroller
-                                      .isYearlypurchased.value)
+                                      .isYearlypurchased.value) &&
+                              isAdLoaded &&
+                              nativeAd3 != null
                           ? Container(
                               decoration: BoxDecoration(
                                   color: white,
@@ -526,7 +524,11 @@ class _AskAIScreenState extends State<AskAIScreen> {
                               height: 150,
                               width: double.infinity,
                               child: AdWidget(ad: nativeAd3!))
-                          : const SizedBox()
+                          : (Subscriptioncontroller.isMonthlypurchased.value ||
+                                  Subscriptioncontroller
+                                      .isYearlypurchased.value)
+                              ? SizedBox()
+                              : ShimmarrNativeSmall(mq: mq, height: 135)
                       : const SizedBox()),
                 ],
               ),
@@ -536,19 +538,25 @@ class _AskAIScreenState extends State<AskAIScreen> {
       ),
       bottomNavigationBar: StatefulBuilder(builder: (context, setState) {
         log("************* is relsult loaded is : ${textController.isresultLoaded.value}");
-        return Obx(() => textController.isresultLoaded.value &&
-                isLoaded &&
-                bannerAd != null &&
-                !InterstitialAdClass.isInterAddLoaded.value &&
-                !AppOpenAdManager.isOpenAdLoaded.value &&
-                (!Subscriptioncontroller.isMonthlypurchased.value &&
-                    !Subscriptioncontroller.isYearlypurchased.value)
-            ? Container(
-                child: AdWidget(ad: bannerAd!),
-                width: bannerAd!.size.width.toDouble(),
-                height: bannerAd!.size.height.toDouble(),
-                alignment: Alignment.center,
-              )
+        return Obx(() => textController.isresultLoaded.value
+            ? isLoaded &&
+                    bannerAd != null &&
+                    !InterstitialAdClass.isInterAddLoaded.value &&
+                    !AppOpenAdManager.isOpenAdLoaded.value &&
+                    (!Subscriptioncontroller.isMonthlypurchased.value &&
+                        !Subscriptioncontroller.isYearlypurchased.value)
+                ? Container(
+                    decoration: BoxDecoration(
+                        color: white, border: Border.all(color: black)),
+                    child: AdWidget(ad: bannerAd!),
+                    width: bannerAd!.size.width.toDouble(),
+                    height: bannerAd!.size.height.toDouble(),
+                    alignment: Alignment.center,
+                  )
+                : (Subscriptioncontroller.isMonthlypurchased.value ||
+                        Subscriptioncontroller.isYearlypurchased.value)
+                    ? SizedBox()
+                    : ShimmarrEffectBanner(mq: mq, height: 50)
             : SizedBox());
       }),
     );
