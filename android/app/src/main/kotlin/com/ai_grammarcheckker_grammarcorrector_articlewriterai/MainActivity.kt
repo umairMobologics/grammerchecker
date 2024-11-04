@@ -1,9 +1,11 @@
 package com.ai_grammarcheckker_grammarcorrector_articlewriterai
+
 import io.flutter.embedding.android.FlutterActivity
+
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugins.googlemobileads.GoogleMobileAdsPlugin
-class MainActivity: FlutterActivity() {
 
+class MainActivity: FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
 
@@ -14,9 +16,9 @@ class MainActivity: FlutterActivity() {
 
 
         GoogleMobileAdsPlugin.registerNativeAdFactory(
-                flutterEngine, "listTile", ListTileNativeAdFactory(context))
+                flutterEngine, "listTile", ListTileNativeAdFactory(this))
         GoogleMobileAdsPlugin.registerNativeAdFactory(
-                flutterEngine, "small", NativeAdFactorySmall(context))
+                flutterEngine, "small", NativeAdFactorySmall(this))
     }
 
     override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {

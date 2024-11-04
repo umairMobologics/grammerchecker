@@ -171,7 +171,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
           child: Container(
             padding: EdgeInsets.symmetric(
               horizontal: 12.0,
-              vertical: (mq.height * 0.020),
+              vertical: (mq.height * 0.010),
             ),
             decoration: BoxDecoration(
               boxShadow: [
