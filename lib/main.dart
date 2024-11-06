@@ -84,8 +84,9 @@ Future main() async {
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((v) {
     // runApp(
-    //   DevicePreview(  enabled: !kReleaseMode,
-    // builder: (context) =>  MyApp(savedLocale: savedLocale)),
+    //   DevicePreview(
+    //       enabled: !kReleaseMode,
+    //       builder: (context) => MyApp(savedLocale: savedLocale)),
     // ); // Wrap your app
 
     runApp(MyApp(savedLocale: savedLocale));

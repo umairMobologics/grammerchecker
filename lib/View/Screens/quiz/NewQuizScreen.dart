@@ -206,8 +206,32 @@ class _StartNewQuizScreenState extends State<StartNewQuizScreen> {
                   quizController.getQuestionsByDifficulty(selectedDifficulty);
 
               if (quizController.filteredQuizQuestions.isEmpty) {
-                return const Text(
-                    "No questions available for the selected difficulty.");
+                return Center(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    buildHeader(height, width, "Grammar Test"),
+                    Center(
+                      child: Column(
+                        children: [
+                          Container(
+                            height: 100,
+                            decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage("assets/noQuiz.png"))),
+                          ),
+                          Text(
+                            "No questions available for the selected difficulty.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: height * .022, color: black),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox()
+                  ],
+                ));
               }
 
               final currentQuestion = quizController.filteredQuizQuestions[
@@ -216,7 +240,7 @@ class _StartNewQuizScreenState extends State<StartNewQuizScreen> {
               return Column(
                 children: [
                   buildHeader(height, width, "Test Started"),
-                  // SizedBox(height: height * .0),
+                  SizedBox(height: height * .0),
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.all(12),
@@ -523,7 +547,7 @@ class _StartNewQuizScreenState extends State<StartNewQuizScreen> {
   Widget buildHeader(double height, double width, String title) {
     return Container(
       width: double.infinity,
-      height: height * .11,
+      height: height * .12,
       color: mainClr,
       child: SafeArea(
         child: Column(

@@ -84,12 +84,12 @@ class _QuizScreenState extends State<QuizScreen> {
     var mq = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Column(
-        children: [
-          HeaderWidget(height: height, text: "Grammar Test"),
-          SizedBox(height: height * 0.03),
-          Expanded(
-            child: Padding(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            HeaderWidget(height: height, text: "Grammar Test"),
+            SizedBox(height: height * 0.03),
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: width * 0.05),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,8 +139,8 @@ class _QuizScreenState extends State<QuizScreen> {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: Obx(() => (!Subscriptioncontroller
                       .isMonthlypurchased.value &&

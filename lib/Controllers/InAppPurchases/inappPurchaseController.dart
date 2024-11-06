@@ -35,6 +35,12 @@ class InAppPurchaseController extends GetxController {
   InAppPurchaseController(this.inAppPurchaseInstance);
   var productDetailsList = <ProductDetails>[].obs;
 
+  // Separate variables for each product
+  ProductDetails? monthlyProduct;
+  ProductDetails? yearlyProduct;
+  RxBool isMonthlyFreeTrial = false.obs;
+  RxBool isYearlyFreeTrial = false.obs;
+
   @override
   void onClose() {
     _subscription?.cancel();
@@ -51,8 +57,24 @@ class InAppPurchaseController extends GetxController {
       productDetailsList.clear(); // Clear the previous list
       for (var product in response.productDetails) {
         productDetailsList.add(product);
+        log("ptoduct id is ${product.id}, ${product.price}");
+        // Assign to specific variables based on product ID
+        if (product.id == 'grammarchecker_monthly' &&
+            !product.price.contains("Free")) {
+          monthlyProduct = product;
+        } else if (product.id == 'grammarchecker_yearly' &&
+            !product.price.contains("Free")) {
+          yearlyProduct = product;
+        }
+        if (product.id == 'grammarchecker_monthly' &&
+            product.price.contains("Free")) {
+          isMonthlyFreeTrial.value = true;
+        } else if (product.id == 'grammarchecker_yearly' &&
+            product.price.contains("Free")) {
+          isMonthlyFreeTrial.value = true;
+        }
       }
-      premiumC.changeSelectedPlan(productDetailsList[0].id);
+      premiumC.changeSelectedPlan(monthlyProduct!.id);
       log("initial plan selected **** ${selectedPlan.value}");
     } else {
       data.value = "No Plan Found!";
@@ -74,12 +96,12 @@ class InAppPurchaseController extends GetxController {
           'There was an error when making the purchase: ${response.error}');
       return;
     }
-    if (response.productDetails.length != 1) {
-      _reportError(
-          'There was an error when making the purchase: product $inAppPurchaseId does not exist?');
-      return;
-    }
-    final productDetails = response.productDetails.single;
+    // if (response.productDetails.length != 1) {
+    //   _reportError(
+    //       'There was an error when making the purchase: product $inAppPurchaseId does not exist?');
+    //   return;
+    // }
+    final productDetails = response.productDetails[0];
 
     log('Making the purchase');
     final purchaseParam = PurchaseParam(productDetails: productDetails);

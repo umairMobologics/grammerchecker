@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 
@@ -54,9 +53,8 @@ class PriceCard extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
                 border: Border.all(color: mainClr),
-                color: controller.selectedIndex.value == index
-                    ? mainClr
-                    : Color.fromARGB(129, 158, 158, 158),
+                color:
+                    controller.selectedIndex.value == index ? mainClr : white,
                 borderRadius: BorderRadius.circular(10)),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -89,14 +87,14 @@ class PriceCard extends StatelessWidget {
                                   : black,
                             ),
                           ),
-                          SizedBox(width: 10),
-                          SvgPicture.asset(
-                            "assets/Icons/arrowNext.svg",
-                            height: 18,
-                            color: controller.selectedIndex.value == index
-                                ? white
-                                : mainClr,
-                          ),
+                          // SizedBox(width: 10),
+                          // SvgPicture.asset(
+                          //   "assets/Icons/arrowNext.svg",
+                          //   height: 18,
+                          //   color: controller.selectedIndex.value == index
+                          //       ? white
+                          //       : mainClr,
+                          // ),
                         ],
                       ),
                     ],

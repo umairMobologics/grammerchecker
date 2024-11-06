@@ -33,6 +33,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     if (controller.productDetailsList.isEmpty) {
       controller.getData();
     } else {
@@ -214,23 +215,19 @@ class _PremiumScreenState extends State<PremiumScreen> {
                                         PriceCard(
                                           index: 0,
                                           onPressed: () {
-                                            if (controller.productDetailsList
-                                                .isNotEmpty) {
+                                            if (controller.monthlyProduct !=
+                                                null) {
                                               premiumC.changeSelectedPlan(
                                                   controller
-                                                      .productDetailsList[0]
-                                                      .id);
+                                                      .monthlyProduct!.id);
                                               log("Selected plan is ${selectedPlan}");
                                             }
                                           },
                                           title: "Monthly Plan",
                                           price:
-                                              "${controller.productDetailsList[0].currencyCode} " +
-                                                  controller
-                                                      .productDetailsList[0]
-                                                      .price,
+                                              controller.monthlyProduct!.price,
                                           description: controller
-                                              .productDetailsList[0].title,
+                                              .monthlyProduct!.description,
                                         ),
                                         SizedBox(height: mq.height * 0.01),
                                         Instruction(),
@@ -238,30 +235,45 @@ class _PremiumScreenState extends State<PremiumScreen> {
                                         PriceCard(
                                           index: 1,
                                           onPressed: () {
-                                            if (controller.productDetailsList
-                                                .isNotEmpty) {
+                                            if (controller.yearlyProduct !=
+                                                null) {
                                               premiumC.changeSelectedPlan(
-                                                  controller
-                                                      .productDetailsList[1]
-                                                      .id);
+                                                  controller.yearlyProduct!.id);
                                               log("Selected plan is ${selectedPlan}");
                                             }
                                           },
                                           title: "Yearly Plan",
                                           price:
-                                              "${controller.productDetailsList[1].currencyCode} " +
-                                                  controller
-                                                      .productDetailsList[1]
-                                                      .price,
+                                              controller.yearlyProduct!.price,
                                           description: controller
-                                              .productDetailsList[1].title,
+                                              .yearlyProduct!.description,
                                         ),
                                         SizedBox(height: mq.height * 0.01),
                                         Instruction(),
                                         SizedBox(height: mq.height * 0.01),
                                       ],
                                     )
-                                  : Center(child: Text(controller.data.value))
+                                  : Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Center(
+                                          child: Container(
+                                        padding: EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            color: mainClr.withOpacity(0.5)),
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.info, color: white),
+                                            SizedBox(width: 10),
+                                            Text(
+                                              controller.data.value,
+                                              style: TextStyle(color: black),
+                                            ),
+                                          ],
+                                        ),
+                                      )),
+                                    )
                               : Center(child: CircularProgressIndicator()),
                         ),
                         Obx(
@@ -289,10 +301,10 @@ class _PremiumScreenState extends State<PremiumScreen> {
                                         }
                                       } else {
                                         // Safely access the first item in the list
-                                        final selectedProduct = controller
-                                                .productDetailsList.isNotEmpty
-                                            ? controller.productDetailsList[0]
-                                            : null;
+                                        final selectedProduct =
+                                            controller.monthlyProduct != null
+                                                ? controller.monthlyProduct
+                                                : null;
 
                                         if (selectedProduct != null) {
                                           premiumC.changeSelectedPlan(
@@ -337,7 +349,13 @@ class _PremiumScreenState extends State<PremiumScreen> {
                                                   controller
                                                       .isYearlypurchased.value
                                               ? "Subscribed"
-                                              : "Subscribe",
+                                              : controller
+                                                      .isMonthlyFreeTrial.value
+                                                  ? "Start Free Trial"
+                                                  : controller.isYearlyFreeTrial
+                                                          .value
+                                                      ? "Start Free Trial"
+                                                      : "Subscribe",
                                       style: TextStyle(
                                           color: white,
                                           fontSize: mq.height * 0.025,

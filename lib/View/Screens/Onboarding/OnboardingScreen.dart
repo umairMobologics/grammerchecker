@@ -7,9 +7,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:grammer_checker_app/Helper/AdsHelper/AdHelper.dart';
-import 'package:grammer_checker_app/Helper/AdsHelper/AppOpenAdManager.dart';
 import 'package:grammer_checker_app/controllers/OnBoardingController.dart';
 import 'package:grammer_checker_app/main.dart';
+import 'package:grammer_checker_app/utils/ShimarEffectAD.dart';
 import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:grammer_checker_app/utils/customTextStyle.dart';
 import 'package:grammer_checker_app/utils/rippleEffect.dart';
@@ -33,57 +33,43 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<String> titles = ["ob1", "ob2", "ob4", "ob3"];
 
   final List<String> descriptions = ["obdes1", "obdes2", "obdes4", "obdes3"];
-
-  //load ad
-  BannerAd? bannerAd;
-  bool isLoaded = false;
-
-  /// Loads a banner ad.
-  void loadAd() {
+  NativeAd? nativeAd3;
+  bool isAdLoaded = false;
+  loadNativeAd() async {
     try {
-      bannerAd = BannerAd(
-        adUnitId: AdHelper.bannerAd,
+      nativeAd3 = NativeAd(
+        factoryId: "small",
+        adUnitId: AdHelper.nativeAd,
+        listener: NativeAdListener(onAdLoaded: (ad) {
+          setState(() {
+            isAdLoaded = true;
+          });
+        }, onAdFailedToLoad: (ad, error) {
+          setState(() {
+            isAdLoaded = false;
+            nativeAd3 = null;
+          });
+        }),
         request: const AdRequest(),
-        size: AdSize.banner,
-        listener: BannerAdListener(
-          // Called when an ad is successfully received.
-          onAdLoaded: (ad) {
-            log('$ad loaded.');
-            setState(() {
-              isLoaded = true;
-            });
-          },
-          // Called when an ad request failed.
-          onAdFailedToLoad: (ad, err) {
-            debugPrint('BannerAd failed to load: $err');
-            // Dispose the ad here to free resources.
-            ad.dispose();
-            setState(() {
-              isLoaded = false;
-              bannerAd = null;
-            });
-          },
-          // Called when an ad opens an overlay that covers the screen.
-          onAdOpened: (Ad ad) {},
-          // Called when an ad removes an overlay that covers the screen.
-          onAdClosed: (Ad ad) {},
-          // Called when an impression occurs on the ad.
-          onAdImpression: (Ad ad) {},
-        ),
-      )..load();
+      );
+
+      nativeAd3!.load();
     } catch (e, stackTrace) {
       setState(() {
-        isLoaded = false;
-        bannerAd = null;
+        isAdLoaded = false;
+        nativeAd3 = null;
       });
       log('Error loading ad: $e');
       FirebaseCrashlytics.instance.recordError(e, stackTrace);
     }
   }
 
-  void disposeBannerAd() {
-    if (bannerAd != null) {
-      bannerAd!.dispose();
+  void disposeAd() {
+    if (nativeAd3 != null) {
+      nativeAd3?.dispose();
+      nativeAd3 = null;
+      // ads.isAdLoaded.value = false;
+      log(" native ad dispose");
     }
   }
 
@@ -91,21 +77,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if (bannerAd == null) {
-      loadAd();
+    if (nativeAd3 == null) {
+      loadNativeAd();
     }
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    disposeBannerAd();
+    disposeAd();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
+    var mq = MediaQuery.of(context).size;
     PageController pageController = PageController();
 
     return Scaffold(
@@ -124,14 +110,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SvgPicture.asset(images[index]),
+                    Flexible(child: SvgPicture.asset(images[index])),
                   ],
                 );
               },
             ),
           ),
           Container(
-            height: size.height * 0.35,
+            height: mq.height * 0.35,
             decoration: BoxDecoration(
                 boxShadow: [
                   BoxShadow(
@@ -151,7 +137,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(bottom: size.height * 0.03),
+                  padding: EdgeInsets.only(bottom: mq.height * 0.03),
                   child: Obx(
                     () => Column(
                       children: [
@@ -159,23 +145,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             textAlign: TextAlign.center,
                             titles[controller.currentPage.value].tr,
                             style: customTextStyle(
-                                fontSize: size.height * 0.024,
+                                fontSize: mq.height * 0.024,
                                 fontWeight: FontWeight.bold)),
                         SizedBox(
-                          height: size.height * 0.02,
+                          height: mq.height * 0.02,
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.02),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: mq.width * 0.02),
                           child: Text(
                             textAlign: TextAlign.center,
                             descriptions[controller.currentPage.value].tr,
-                            style:
-                                customTextStyle(fontSize: size.height * 0.020),
+                            style: customTextStyle(fontSize: mq.height * 0.020),
                           ),
                         ),
                         SizedBox(
-                          height: size.height * 0.01,
+                          height: mq.height * 0.01,
                         )
                       ],
                     ),
@@ -218,7 +203,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   pageController, images.length),
                           child: Ink(
                             padding: const EdgeInsets.all(18),
-                            width: size.width * 0.23,
+                            width: mq.width * 0.23,
                             decoration: BoxDecoration(
                                 color: mainClr,
                                 borderRadius: BorderRadius.circular(12)),
@@ -239,21 +224,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           )
         ],
       ),
-      bottomNavigationBar: StatefulBuilder(builder: (context, setState) {
-        return Obx(() => !InterstitialAdClass.isInterAddLoaded.value &&
-                !AppOpenAdManager.isOpenAdLoaded.value &&
-                (!Subscriptioncontroller.isMonthlypurchased.value &&
-                    !Subscriptioncontroller.isYearlypurchased.value) &&
-                isLoaded &&
-                bannerAd != null
-            ? Container(
-                child: AdWidget(ad: bannerAd!),
-                width: bannerAd!.size.width.toDouble(),
-                height: bannerAd!.size.height.toDouble(),
-                alignment: Alignment.center,
-              )
-            : SizedBox());
-      }),
+      bottomNavigationBar: Obx(() => (!Subscriptioncontroller
+                      .isMonthlypurchased.value &&
+                  !Subscriptioncontroller.isYearlypurchased.value) &&
+              isAdLoaded &&
+              nativeAd3 != null
+          ? Container(
+              decoration:
+                  BoxDecoration(color: white, border: Border.all(color: black)),
+              height: 150,
+              width: double.infinity,
+              child: AdWidget(ad: nativeAd3!))
+          : (Subscriptioncontroller.isMonthlypurchased.value ||
+                  Subscriptioncontroller.isYearlypurchased.value)
+              ? SizedBox()
+              : ShimmarrNativeSmall(mq: mq, height: 135)),
     );
   }
 }
