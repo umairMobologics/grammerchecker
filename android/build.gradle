@@ -9,6 +9,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.8.1'
+        
     }
 }
 
@@ -26,6 +27,7 @@ subprojects {
 subprojects {
     project.evaluationDependsOn(':app')
 }
+
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
