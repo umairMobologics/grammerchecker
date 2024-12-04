@@ -18,12 +18,12 @@ if (localPropertiesFile.exists()) {
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
-    flutterVersionCode = '14'
+    flutterVersionCode = '16'
 }
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
-    flutterVersionName = '1.13'
+    flutterVersionName = '1.15'
 }
 
 def keystoreProperties = new Properties()
@@ -67,11 +67,6 @@ android {
     
     }
 
-    // compileOptions {
-    //     coreLibraryDesugaringEnabled true
-    //     sourceCompatibility = JavaVersion.VERSION_1_8
-    //     targetCompatibility = JavaVersion.VERSION_1_8
-    // }
     signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
@@ -85,6 +80,10 @@ android {
             signingConfig signingConfigs.release
             shrinkResources false
             minifyEnabled false
+            
+            // Use Proguard rules file
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     }
@@ -94,6 +93,8 @@ flutter {
 }
 
 dependencies {
+    def multidex_version = "2.0.1"
+    implementation "androidx.multidex:multidex:$multidex_version"
     implementation 'com.google.mlkit:text-recognition-chinese:16.0.0-beta6'
     implementation 'com.google.mlkit:text-recognition-devanagari:16.0.0-beta6'
     implementation 'com.google.mlkit:text-recognition-japanese:16.0.0-beta6'
@@ -110,6 +111,7 @@ dependencies {
     implementation("com.google.firebase:firebase-config")
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.ads.mediation:facebook:6.17.0.0")
+    
    
 }
 

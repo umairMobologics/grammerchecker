@@ -1,0 +1,3 @@
+-keep class me.carda.awesome_notifications.** { *; }
+-keep class com.dexterous.flutterlocalnotifications.** { *; }
+-keep class androidx.lifecycle.** { *; }

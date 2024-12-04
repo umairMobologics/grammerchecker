@@ -10,15 +10,16 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:grammer_checker_app/Controllers/InAppPurchases/inappPurchaseController.dart';
-import 'package:grammer_checker_app/Controllers/QuizController.dart';
-import 'package:grammer_checker_app/Helper/RemoteConfig/remoteConfigs.dart';
-import 'package:grammer_checker_app/Helper/checkInternetConnectivity.dart';
-import 'package:grammer_checker_app/Localization/Languages.dart';
+import 'package:grammer_checker_app/Controllers/QuizController/QuizController.dart';
 import 'package:grammer_checker_app/View/Screens/SplashScreen.dart';
-import 'package:grammer_checker_app/firebase_options.dart';
+import 'package:grammer_checker_app/core/Helper/RemoteConfig/remoteConfigs.dart';
+import 'package:grammer_checker_app/core/Helper/checkInternetConnectivity.dart';
+import 'package:grammer_checker_app/core/Localization/Languages.dart';
+import 'package:grammer_checker_app/core/localNotificationServices/AwesomeNotifications.dart';
 // import 'package:grammer_checker_app/firebase_options.dart';
-import 'package:grammer_checker_app/utils/colors.dart';
-import 'package:grammer_checker_app/utils/customTextStyle.dart';
+import 'package:grammer_checker_app/core/utils/colors.dart';
+import 'package:grammer_checker_app/core/utils/customTextStyle.dart';
+import 'package:grammer_checker_app/firebase_options.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -47,6 +48,11 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 //for getting languages
   Locale? savedLocale = await getSavedLocale();
+
+  //local notification
+  await AwesomeNotificationServices.notificationConfiguration();
+  // final NotificationService notificationService = NotificationService();
+  // await notificationService.initNotification();
 
   SharedPreferences preferences = await SharedPreferences.getInstance();
   initScreen = preferences.getInt('initScreen');
@@ -136,6 +142,7 @@ class _MyAppState extends State<MyApp> {
           );
         },
         theme: ThemeData(
+          visualDensity: VisualDensity.adaptivePlatformDensity,
           useMaterial3: true,
           appBarTheme: AppBarTheme(
               // centerTitle: true,
@@ -156,6 +163,7 @@ class _MyAppState extends State<MyApp> {
         //     "onboard": (context) => OnboardingScreen(),
         //   },
         // );
+
         home: SplashScreen());
   }
 }

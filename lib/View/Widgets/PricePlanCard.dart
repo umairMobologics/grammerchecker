@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:grammer_checker_app/utils/colors.dart';
+import 'package:grammer_checker_app/core/utils/colors.dart';
 
 class PriceCardController extends GetxController {
   var selectedIndex = 0.obs; // Observing the selected index

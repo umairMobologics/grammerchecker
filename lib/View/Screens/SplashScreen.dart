@@ -7,15 +7,17 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:grammer_checker_app/Controllers/SplashAnimation.dart';
-import 'package:grammer_checker_app/Firebase/FirebaseService.dart';
-import 'package:grammer_checker_app/Helper/AdsHelper/AdHelper.dart';
 import 'package:grammer_checker_app/View/Screens/BottomNav/BottomNavScreen.dart';
 import 'package:grammer_checker_app/View/Screens/InAppSubscription/PremiumFeatureScreen.dart';
 import 'package:grammer_checker_app/View/Screens/Onboarding/OnboardingScreen.dart';
+import 'package:grammer_checker_app/core/Helper/AdsHelper/AdHelper.dart';
+import 'package:grammer_checker_app/core/Helper/AdsHelper/AppOpenAdManager.dart';
+import 'package:grammer_checker_app/core/utils/ShimarEffectAD.dart';
+import 'package:grammer_checker_app/core/utils/colors.dart';
+import 'package:grammer_checker_app/core/utils/customTextStyle.dart';
 import 'package:grammer_checker_app/main.dart';
-import 'package:grammer_checker_app/utils/ShimarEffectAD.dart';
-import 'package:grammer_checker_app/utils/colors.dart';
-import 'package:grammer_checker_app/utils/customTextStyle.dart';
+
+import '../../core/Firebase/FirebaseQuizService.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -224,6 +226,8 @@ class _SplashScreenState extends State<SplashScreen>
       bottomNavigationBar: Obx(() => (!Subscriptioncontroller
                       .isMonthlypurchased.value &&
                   !Subscriptioncontroller.isYearlypurchased.value) &&
+              !InterstitialAdClass.isInterAddLoaded.value &&
+              !AppOpenAdManager.isOpenAdLoaded.value &&
               isAdLoaded &&
               nativeAd3 != null
           ? Container(

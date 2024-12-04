@@ -3,8 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grammer_checker_app/View/Screens/InAppSubscription/PremiumFeatureScreen.dart';
+import 'package:grammer_checker_app/core/utils/colors.dart';
 import 'package:grammer_checker_app/main.dart';
-import 'package:grammer_checker_app/utils/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TokenLimitService extends GetxController {
@@ -66,6 +66,11 @@ class TokenLimitService extends GetxController {
       usageCount.value--;
       await _saveUsageData(usageCount.value, DateTime.now().day);
     }
+  }
+
+  Future<void> creditReward(int count) async {
+    usageCount.value = usageCount.value + count;
+    await _saveUsageData(usageCount.value, DateTime.now().day);
   }
 
   void navigateToPremiumScreen(BuildContext context) {

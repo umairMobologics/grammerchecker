@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:grammer_checker_app/Controllers/TTS_Controller.dart';
-import 'package:grammer_checker_app/utils/colors.dart';
+import 'package:grammer_checker_app/core/utils/colors.dart';
 
 class CorrecterContainerBox extends StatelessWidget {
   final String originalText;

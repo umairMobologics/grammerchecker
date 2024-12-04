@@ -6,13 +6,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:grammer_checker_app/Controllers/InAppPurchases/PremiumFeatureController.dart';
 import 'package:grammer_checker_app/Controllers/InAppPurchases/inappPurchaseController.dart';
-import 'package:grammer_checker_app/Controllers/PremiumFeatureController.dart';
 import 'package:grammer_checker_app/View/Screens/BottomNav/BottomNavScreen.dart';
 import 'package:grammer_checker_app/View/Screens/InAppSubscription/SubscriptionInfoScreen.dart';
 import 'package:grammer_checker_app/View/Widgets/PricePlanCard.dart';
-import 'package:grammer_checker_app/utils/colors.dart';
-import 'package:grammer_checker_app/utils/snackbar.dart';
+import 'package:grammer_checker_app/core/utils/colors.dart';
+import 'package:grammer_checker_app/core/utils/snackbar.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
 

@@ -6,13 +6,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:grammer_checker_app/Helper/AdsHelper/AdHelper.dart';
 import 'package:grammer_checker_app/controllers/OnBoardingController.dart';
+import 'package:grammer_checker_app/core/Helper/AdsHelper/AdHelper.dart';
+import 'package:grammer_checker_app/core/utils/ShimarEffectAD.dart';
+import 'package:grammer_checker_app/core/utils/colors.dart';
+import 'package:grammer_checker_app/core/utils/customTextStyle.dart';
+import 'package:grammer_checker_app/core/utils/rippleEffect.dart';
 import 'package:grammer_checker_app/main.dart';
-import 'package:grammer_checker_app/utils/ShimarEffectAD.dart';
-import 'package:grammer_checker_app/utils/colors.dart';
-import 'package:grammer_checker_app/utils/customTextStyle.dart';
-import 'package:grammer_checker_app/utils/rippleEffect.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {

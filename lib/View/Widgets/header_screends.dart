@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:grammer_checker_app/View/Screens/InAppSubscription/PremiumFeatureScreen.dart';
-import 'package:grammer_checker_app/utils/colors.dart';
+import 'package:grammer_checker_app/core/utils/colors.dart';
 
 class HeaderWidget extends StatelessWidget {
   double height;
@@ -13,8 +13,6 @@ class HeaderWidget extends StatelessWidget {
     return ClipPath(
       // clipper: MovieTicketClipper(),
       child: Container(
-        width: double.infinity,
-        height: height * .11,
         color: mainClr,
         child: SafeArea(
           child: Row(
@@ -54,11 +52,11 @@ class HeaderWidget extends StatelessWidget {
               ),
               // IconButton(
               //     onPressed: () async {
-              //       DatabaseHelper().clearTable("vocabulary");
-              //       FetchQuizDataController().refreshQuizData();
+              //       // FirebaseCourseServices.saveLevelToFirestore(
+              //       //     level7, "level7");
               //     },
               //     icon: const Icon(
-              //       Icons.delete,
+              //       Icons.add,
               //       color: Colors.red,
               //     )),
             ],

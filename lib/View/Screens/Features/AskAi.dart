@@ -6,23 +6,23 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:grammer_checker_app/Controllers/AskAiCOntroller.dart';
+import 'package:grammer_checker_app/Controllers/FeaturesController/AskAiCOntroller.dart';
 import 'package:grammer_checker_app/Controllers/TTS_Controller.dart';
-import 'package:grammer_checker_app/Helper/AdsHelper/AdHelper.dart';
-import 'package:grammer_checker_app/Helper/AdsHelper/AppOpenAdManager.dart';
 import 'package:grammer_checker_app/View/Screens/Homepage.dart';
 import 'package:grammer_checker_app/View/Screens/InAppSubscription/PremiumFeatureScreen.dart';
 import 'package:grammer_checker_app/View/Widgets/CustomButton.dart';
 import 'package:grammer_checker_app/View/Widgets/CustomInputContainer.dart';
 import 'package:grammer_checker_app/View/Widgets/noInternetWidget.dart';
+import 'package:grammer_checker_app/core/Helper/AdsHelper/AdHelper.dart';
+import 'package:grammer_checker_app/core/Helper/AdsHelper/AppOpenAdManager.dart';
+import 'package:grammer_checker_app/core/PermissionsServices/permissiionHandler.dart';
+import 'package:grammer_checker_app/core/utils/LoadingDialouge.dart';
+import 'package:grammer_checker_app/core/utils/ShimarEffectAD.dart';
+import 'package:grammer_checker_app/core/utils/colors.dart';
+import 'package:grammer_checker_app/core/utils/customTextStyle.dart';
+import 'package:grammer_checker_app/core/utils/sharetext.dart';
+import 'package:grammer_checker_app/core/utils/snackbar.dart';
 import 'package:grammer_checker_app/main.dart';
-import 'package:grammer_checker_app/utils/LoadingDialouge.dart';
-import 'package:grammer_checker_app/utils/ShimarEffectAD.dart';
-import 'package:grammer_checker_app/utils/colors.dart';
-import 'package:grammer_checker_app/utils/customTextStyle.dart';
-import 'package:grammer_checker_app/utils/permissiionHandler.dart';
-import 'package:grammer_checker_app/utils/sharetext.dart';
-import 'package:grammer_checker_app/utils/snackbar.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class AskAIScreen extends StatefulWidget {
@@ -515,6 +515,8 @@ class _AskAIScreenState extends State<AskAIScreen> {
                       ? (!Subscriptioncontroller.isMonthlypurchased.value &&
                                   !Subscriptioncontroller
                                       .isYearlypurchased.value) &&
+                              !InterstitialAdClass.isInterAddLoaded.value &&
+                              !AppOpenAdManager.isOpenAdLoaded.value &&
                               isAdLoaded &&
                               nativeAd3 != null
                           ? Container(

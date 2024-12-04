@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:get/get.dart';
+import 'package:grammer_checker_app/core/utils/snackbar.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:logging/logging.dart';
 
-import '../PremiumFeatureController.dart';
+import 'PremiumFeatureController.dart';
 
 class InAppPurchaseController extends GetxController {
   final premiumC = Get.put(PremiumFeatureController());
@@ -109,6 +110,11 @@ class InAppPurchaseController extends GetxController {
       final success = await inAppPurchaseInstance.buyNonConsumable(
           purchaseParam: purchaseParam);
       log('buyNonConsumable() request was sent with success: $success');
+      if (!success) {
+        CustomSnackbar.showSnackbar(
+            "Couldn't process, try again later.", SnackPosition.BOTTOM);
+        return;
+      }
     } catch (e) {
       _log.severe(
           'Problem with calling inAppPurchaseInstance.buyNonConsumable(): $e');

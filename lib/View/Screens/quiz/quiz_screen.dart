@@ -4,13 +4,13 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:grammer_checker_app/Helper/AdsHelper/AdHelper.dart';
-import 'package:grammer_checker_app/View/Screens/quiz/NewQuizScreen.dart';
+import 'package:grammer_checker_app/View/Screens/quiz/startQuizScreen.dart';
 import 'package:grammer_checker_app/View/Widgets/header_screends.dart';
+import 'package:grammer_checker_app/core/Helper/AdsHelper/AdHelper.dart';
+import 'package:grammer_checker_app/core/utils/ShimarEffectAD.dart';
+import 'package:grammer_checker_app/core/utils/colors.dart';
+import 'package:grammer_checker_app/core/utils/theme.dart';
 import 'package:grammer_checker_app/main.dart';
-import 'package:grammer_checker_app/utils/ShimarEffectAD.dart';
-import 'package:grammer_checker_app/utils/colors.dart';
-import 'package:grammer_checker_app/utils/theme.dart';
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});

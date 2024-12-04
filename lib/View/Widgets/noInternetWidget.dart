@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grammer_checker_app/utils/colors.dart';
+import 'package:grammer_checker_app/core/utils/colors.dart';
 import 'package:lottie/lottie.dart';
 
 class NoInternetWidget extends StatelessWidget {
