@@ -153,9 +153,9 @@ class ResultScreen extends StatelessWidget {
                   child: InkWell(
                     onTap: () async {
                       if (InterstitialAdClass.interstitialAd != null &&
-                          (!Subscriptioncontroller.isMonthlypurchased.value &&
-                              !Subscriptioncontroller
-                                  .isYearlypurchased.value)) {
+                          (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                              Subscriptioncontroller
+                                  .isYearlypurchased.value))) {
                         InterstitialAdClass.showInterstitialAd(context);
                         InterstitialAdClass.count = 0;
                       }

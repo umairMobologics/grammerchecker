@@ -155,9 +155,10 @@ class _RewardScreenState extends State<RewardScreen> {
                         if (InterstitialAdClass.count ==
                                 InterstitialAdClass.totalLimit &&
                             InterstitialAdClass.interstitialAd != null &&
-                            (!Subscriptioncontroller.isMonthlypurchased.value &&
-                                !Subscriptioncontroller
-                                    .isYearlypurchased.value)) {
+                            (!(Subscriptioncontroller
+                                    .isMonthlypurchased.value ||
+                                Subscriptioncontroller
+                                    .isYearlypurchased.value))) {
                           InterstitialAdClass.showInterstitialAd(context);
                         }
                         // if (globleController.isLevel1Completed.value &&
@@ -251,9 +252,10 @@ class _RewardScreenState extends State<RewardScreen> {
                         if (InterstitialAdClass.count ==
                                 InterstitialAdClass.totalLimit &&
                             InterstitialAdClass.interstitialAd != null &&
-                            (!Subscriptioncontroller.isMonthlypurchased.value &&
-                                !Subscriptioncontroller
-                                    .isYearlypurchased.value)) {
+                            (!(Subscriptioncontroller
+                                    .isMonthlypurchased.value ||
+                                Subscriptioncontroller
+                                    .isYearlypurchased.value))) {
                           InterstitialAdClass.showInterstitialAd(context);
                         }
                         if (globleController.isLevel2Completed.value &&
@@ -346,9 +348,10 @@ class _RewardScreenState extends State<RewardScreen> {
                         if (InterstitialAdClass.count ==
                                 InterstitialAdClass.totalLimit &&
                             InterstitialAdClass.interstitialAd != null &&
-                            (!Subscriptioncontroller.isMonthlypurchased.value &&
-                                !Subscriptioncontroller
-                                    .isYearlypurchased.value)) {
+                            (!(Subscriptioncontroller
+                                    .isMonthlypurchased.value ||
+                                Subscriptioncontroller
+                                    .isYearlypurchased.value))) {
                           InterstitialAdClass.showInterstitialAd(context);
                         }
                         if (globleController.isLevel3Completed.value &&
@@ -436,9 +439,9 @@ class _RewardScreenState extends State<RewardScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: Obx(() => (!Subscriptioncontroller
-                      .isMonthlypurchased.value &&
-                  !Subscriptioncontroller.isYearlypurchased.value) &&
+      bottomNavigationBar: Obx(() => (!(Subscriptioncontroller
+                      .isMonthlypurchased.value ||
+                  Subscriptioncontroller.isYearlypurchased.value)) &&
               !InterstitialAdClass.isInterAddLoaded.value &&
               !AppOpenAdManager.isOpenAdLoaded.value &&
               isAdLoaded &&

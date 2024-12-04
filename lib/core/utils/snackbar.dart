@@ -37,9 +37,9 @@ showToast(BuildContext context, String text) {
   );
 }
 
-void showFeedback(bool isCorrect) {
+void showFeedback(bool isCorrect, String type) {
   final message = isCorrect
-      ? "🎉 Great job! Your sentence is correct."
+      ? "🎉 Great job! Your $type is correct."
       : "❌ Oops! That's not correct.";
   final color = isCorrect ? Colors.green : Colors.red;
 

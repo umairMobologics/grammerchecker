@@ -351,9 +351,9 @@ class _AskAIScreenState extends State<AskAIScreen> {
                         onSubmitted: () {},
                       ),
                     ),
-                    Obx(() => !Subscriptioncontroller
-                                .isMonthlypurchased.value &&
-                            !Subscriptioncontroller.isYearlypurchased.value
+                    Obx(() => (!(Subscriptioncontroller
+                                .isMonthlypurchased.value ||
+                            Subscriptioncontroller.isYearlypurchased.value))
                         ? Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5)),
@@ -414,10 +414,11 @@ class _AskAIScreenState extends State<AskAIScreen> {
                                         if (InterstitialAdClass
                                                     .interstitialAd !=
                                                 null &&
-                                            (!Subscriptioncontroller
-                                                    .isMonthlypurchased.value &&
-                                                !Subscriptioncontroller
-                                                    .isYearlypurchased.value)) {
+                                            (!(Subscriptioncontroller
+                                                    .isMonthlypurchased.value ||
+                                                Subscriptioncontroller
+                                                    .isYearlypurchased
+                                                    .value))) {
                                           InterstitialAdClass
                                               .showInterstitialAd(context);
                                           InterstitialAdClass.count = 0;
@@ -512,9 +513,9 @@ class _AskAIScreenState extends State<AskAIScreen> {
                     color: white,
                   ),
                   Obx(() => !textController.isresultLoaded.value
-                      ? (!Subscriptioncontroller.isMonthlypurchased.value &&
-                                  !Subscriptioncontroller
-                                      .isYearlypurchased.value) &&
+                      ? (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                                  Subscriptioncontroller
+                                      .isYearlypurchased.value)) &&
                               !InterstitialAdClass.isInterAddLoaded.value &&
                               !AppOpenAdManager.isOpenAdLoaded.value &&
                               isAdLoaded &&
@@ -545,8 +546,8 @@ class _AskAIScreenState extends State<AskAIScreen> {
                     bannerAd != null &&
                     !InterstitialAdClass.isInterAddLoaded.value &&
                     !AppOpenAdManager.isOpenAdLoaded.value &&
-                    (!Subscriptioncontroller.isMonthlypurchased.value &&
-                        !Subscriptioncontroller.isYearlypurchased.value)
+                    (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                        Subscriptioncontroller.isYearlypurchased.value))
                 ? Container(
                     decoration: BoxDecoration(
                         color: white, border: Border.all(color: black)),

@@ -154,7 +154,7 @@ class _Level3BlanksScreenState extends State<Level3BlanksScreen> {
                     ? InkWell(
                         onTap: () {
                           Intro.of(context).start(
-                            reset: false,
+                            reset: true,
                           );
                         },
                         child: const Icon(Icons.info),
@@ -234,14 +234,18 @@ class _Level3BlanksScreenState extends State<Level3BlanksScreen> {
               itemBuilder: (context, index) {
                 Level3RewardModel question = controller.level3Question[index];
                 log("${controller.level3Question.length}");
-                options = question.options
-                    .split('/')
-                    .where((word) => word.isNotEmpty)
-                    .toList();
-                controller.WordLength.value = options.length;
+                if (controller.tempWords.isEmpty) {
+                  options = question.options
+                      .split('/')
+                      .where((word) => word.isNotEmpty)
+                      .toList();
+                  controller.WordLength.value = options.length;
 
-                log("Options are  ${options}");
-                controller.tempWords.value = options;
+                  log("Options are  ${options}");
+                  controller.tempWords.value = options;
+                } else {
+                  print("****************** refresh again");
+                }
 
                 return Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -501,7 +505,8 @@ class _Level3BlanksScreenState extends State<Level3BlanksScreen> {
                                             await controller.checkAnswer(
                                                 useranswer,
                                                 question.correctAnswer);
-                                        showFeedback(isCorrect); // For SnackBar
+                                        showFeedback(isCorrect,
+                                            "answer"); // For SnackBar
                                         controller.selectedWords.clear();
                                         await Future.delayed(
                                             Duration(seconds: 2));
@@ -513,7 +518,8 @@ class _Level3BlanksScreenState extends State<Level3BlanksScreen> {
                                             await controller.checkAnswer(
                                                 useranswer,
                                                 question.correctAnswer);
-                                        showFeedback(isCorrect); // For SnackBar
+                                        showFeedback(isCorrect,
+                                            "answer"); // For SnackBar
                                         controller.isQuizCompleted.value = true;
                                         controller.level3Result(
                                             controller.level3Question);
@@ -589,8 +595,8 @@ class _Level3BlanksScreenState extends State<Level3BlanksScreen> {
             );
           }),
           bottomNavigationBar: Obx(() =>
-              (!Subscriptioncontroller.isMonthlypurchased.value &&
-                          !Subscriptioncontroller.isYearlypurchased.value) &&
+              (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                          Subscriptioncontroller.isYearlypurchased.value)) &&
                       !InterstitialAdClass.isInterAddLoaded.value &&
                       !AppOpenAdManager.isOpenAdLoaded.value &&
                       isAdLoaded &&
@@ -617,44 +623,57 @@ class _Level3BlanksScreenState extends State<Level3BlanksScreen> {
     return InkWell(
         key: key,
         onTap: () {
-          showDialog(
-            context: context,
-            builder: (_) => ProFeatureDialog(
-              onWatchAdTap: () {
-                Navigator.of(context).pop();
-                print("Watch Ad button tapped!");
-                RewardedAdHelper.showRewardedAd(
-                  context: context,
-                  onRewardEarned: () {
-                    // Show clue or next hint here
-                    String word = question.correctAnswer;
-                    controller.addWordToSequenceLevel3(word);
+          if ((!(Subscriptioncontroller.isMonthlypurchased.value ||
+              Subscriptioncontroller.isYearlypurchased.value))) {
+            showDialog(
+              context: context,
+              builder: (_) => ProFeatureDialog(
+                onWatchAdTap: () {
+                  Navigator.of(context).pop();
+                  print("Watch Ad button tapped!");
+                  RewardedAdHelper.showRewardedAd(
+                    context: context,
+                    onRewardEarned: () {
+                      // Show clue or next hint here
+                      String word = question.correctAnswer;
+                      controller.addWordToSequenceLevel3(word);
 
-                    controller.outputText.value = controller.updateQuestion(
-                      question.question,
-                      word,
-                    );
-                    log("Clue shown: ${controller.outputText}");
-                  },
-                  onAdFailedToLoad: () {
-                    // Handle the case when no ad is available
-                    log("No ad available. Showing clue directly.");
-                    String word = question.correctAnswer;
-                    controller.addWordToSequenceLevel3(word);
+                      controller.outputText.value = controller.updateQuestion(
+                        question.question,
+                        word,
+                      );
+                      log("Clue shown: ${controller.outputText}");
+                    },
+                    onAdFailedToLoad: () {
+                      // Handle the case when no ad is available
+                      log("No ad available. Showing clue directly.");
+                      String word = question.correctAnswer;
+                      controller.addWordToSequenceLevel3(word);
 
-                    controller.outputText.value = controller.updateQuestion(
-                      question.question,
-                      word,
-                    );
-                  },
-                );
-              },
-              onGetProTap: () {
-                Get.to(() => PremiumScreen(isSplash: false));
-                print("Get Pro button tapped!");
-              },
-            ),
-          );
+                      controller.outputText.value = controller.updateQuestion(
+                        question.question,
+                        word,
+                      );
+                    },
+                  );
+                },
+                onGetProTap: () {
+                  Get.to(() => PremiumScreen(isSplash: false));
+                  print("Get Pro button tapped!");
+                },
+              ),
+            );
+          } else {
+            // Show clue or next hint here
+            String word = question.correctAnswer;
+            controller.addWordToSequenceLevel3(word);
+
+            controller.outputText.value = controller.updateQuestion(
+              question.question,
+              word,
+            );
+            log("Clue shown: ${controller.outputText}");
+          }
         },
         child: TooltipWidget());
   }

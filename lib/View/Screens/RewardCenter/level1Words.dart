@@ -170,7 +170,7 @@ class _Level1WordsScreenState extends State<Level1WordsScreen> {
                       ? InkWell(
                           onTap: () {
                             Intro.of(context).start(
-                              reset: false,
+                              reset: true,
                             );
                           },
                           child: const Icon(Icons.info),
@@ -180,6 +180,7 @@ class _Level1WordsScreenState extends State<Level1WordsScreen> {
               ],
             ),
             body: Obx(() {
+              print("body called *****************");
               // Show loading indicator if the data is being fetched
               if (controller.isLoading.value) {
                 return Center(
@@ -250,19 +251,24 @@ class _Level1WordsScreenState extends State<Level1WordsScreen> {
                 itemBuilder: (context, index) {
                   Level1RewardModel question = controller.level1Question[index];
                   log("${controller.level1Question.length}");
-                  totalwords = question.question
-                      .toLowerCase()
-                      .split(RegExp(r'\s+|\/'))
-                      .where((word) => word.isNotEmpty)
-                      .toList();
-                  log("total words $totalwords");
-                  totalwords.shuffle();
-                  totalwords.shuffle();
-                  totalwords.shuffle();
-                  log("word length is ${totalwords}");
-                  controller.WordLength.value = totalwords.length;
+                  if (controller.tempWords.isEmpty) {
+                    totalwords = question.question
+                        .toLowerCase()
+                        .replaceAll(" ", "")
+                        .split(RegExp(r'\s+|\/'))
+                        .where((word) => word.isNotEmpty)
+                        .toList();
+                    log("total words $totalwords");
+                    totalwords.shuffle();
+                    totalwords.shuffle();
+                    totalwords.shuffle();
+                    log("word length is ${totalwords}");
+                    controller.WordLength.value = totalwords.length;
 
-                  controller.tempWords.value = totalwords;
+                    controller.tempWords.value = totalwords;
+                  } else {
+                    print("****************** refresh again");
+                  }
 
                   return Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -534,7 +540,8 @@ class _Level1WordsScreenState extends State<Level1WordsScreen> {
                                             await controller.checkAnswer(
                                                 useranswer,
                                                 question.correctAnswer);
-                                        showFeedback(isCorrect); // For SnackBar
+                                        showFeedback(
+                                            isCorrect, "word"); // For SnackBar
                                         controller.selectedWords.clear();
                                         await Future.delayed(
                                             Duration(seconds: 2));
@@ -546,7 +553,8 @@ class _Level1WordsScreenState extends State<Level1WordsScreen> {
                                             await controller.checkAnswer(
                                                 useranswer,
                                                 question.correctAnswer);
-                                        showFeedback(isCorrect); // For SnackBar
+                                        showFeedback(
+                                            isCorrect, "word"); // For SnackBar
                                         controller.isQuizCompleted.value = true;
                                         controller.level1Result(
                                             controller.level1Question);
@@ -621,8 +629,8 @@ class _Level1WordsScreenState extends State<Level1WordsScreen> {
               );
             }),
             bottomNavigationBar: Obx(() =>
-                (!Subscriptioncontroller.isMonthlypurchased.value &&
-                            !Subscriptioncontroller.isYearlypurchased.value) &&
+                (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                            Subscriptioncontroller.isYearlypurchased.value)) &&
                         !InterstitialAdClass.isInterAddLoaded.value &&
                         !AppOpenAdManager.isOpenAdLoaded.value &&
                         isAdLoaded &&
@@ -650,31 +658,36 @@ class _Level1WordsScreenState extends State<Level1WordsScreen> {
     return InkWell(
         key: key,
         onTap: () {
-          showDialog(
-            context: context,
-            builder: (_) => ProFeatureDialog(
-              onWatchAdTap: () {
-                Navigator.of(context).pop();
-                print("Watch Ad button tapped!");
-                RewardedAdHelper.showRewardedAd(
-                  context: context,
-                  onRewardEarned: () {
-                    // Show clue or next hint here
-                    ClueLogic(question);
-                  },
-                  onAdFailedToLoad: () {
-                    // Handle the case when no ad is available
-                    ClueLogic(question);
-                  },
-                );
-                // Split the correctAnswer into characters
-              },
-              onGetProTap: () {
-                Get.to(() => PremiumScreen(isSplash: false));
-                print("Get Pro button tapped!");
-              },
-            ),
-          );
+          if (!(Subscriptioncontroller.isMonthlypurchased.value ||
+              Subscriptioncontroller.isYearlypurchased.value)) {
+            showDialog(
+              context: context,
+              builder: (_) => ProFeatureDialog(
+                onWatchAdTap: () {
+                  Navigator.of(context).pop();
+                  print("Watch Ad button tapped!");
+                  RewardedAdHelper.showRewardedAd(
+                    context: context,
+                    onRewardEarned: () {
+                      // Show clue or next hint here
+                      ClueLogic(question);
+                    },
+                    onAdFailedToLoad: () {
+                      // Handle the case when no ad is available
+                      ClueLogic(question);
+                    },
+                  );
+                  // Split the correctAnswer into characters
+                },
+                onGetProTap: () {
+                  Get.to(() => PremiumScreen(isSplash: false));
+                  print("Get Pro button tapped!");
+                },
+              ),
+            );
+          } else {
+            ClueLogic(question);
+          }
         },
         child: TooltipWidget());
   }

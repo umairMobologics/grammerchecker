@@ -24,8 +24,8 @@ class AppLifecycleReactor {
     if (appState == AppState.foreground) {
       if (shouldShowOpenAd.value &&
           InterstitialAdClass.isInterAddLoaded.value == false &&
-          (!Subscriptioncontroller.isMonthlypurchased.value &&
-              !Subscriptioncontroller.isYearlypurchased.value)) {
+          (!(Subscriptioncontroller.isMonthlypurchased.value ||
+              Subscriptioncontroller.isYearlypurchased.value))) {
         log("ad is going to be shown $shouldShowOpenAd");
         appOpenAdManager.showAdIfAvailable();
       }

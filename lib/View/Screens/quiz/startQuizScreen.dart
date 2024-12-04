@@ -368,8 +368,8 @@ class _StartNewQuizScreenState extends State<StartNewQuizScreen> {
           }
         }),
         bottomNavigationBar: Obx(() =>
-            (!Subscriptioncontroller.isMonthlypurchased.value &&
-                        !Subscriptioncontroller.isYearlypurchased.value) &&
+            (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                        Subscriptioncontroller.isYearlypurchased.value)) &&
                     isAdLoaded &&
                     nativeAd3 != null
                 ? Container(
@@ -456,8 +456,8 @@ class _StartNewQuizScreenState extends State<StartNewQuizScreen> {
 
               quizController.clearAllFields();
 
-              if ((!Subscriptioncontroller.isMonthlypurchased.value &&
-                      !Subscriptioncontroller.isYearlypurchased.value) &&
+              if ((!(Subscriptioncontroller.isMonthlypurchased.value ||
+                      Subscriptioncontroller.isYearlypurchased.value)) &&
                   InterstitialAdClass.interstitialAd != null) {
                 InterstitialAdClass.showInterstitialAd(context);
               }

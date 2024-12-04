@@ -165,18 +165,18 @@ class _SplashScreenState extends State<SplashScreen>
                                 } else {
                                   if (InterstitialAdClass.interstitialAd !=
                                           null &&
-                                      (!Subscriptioncontroller
-                                              .isMonthlypurchased.value &&
-                                          !Subscriptioncontroller
-                                              .isYearlypurchased.value)) {
+                                      (!(Subscriptioncontroller
+                                              .isMonthlypurchased.value ||
+                                          Subscriptioncontroller
+                                              .isYearlypurchased.value))) {
                                     InterstitialAdClass.showInterstitialAd(
                                         context);
                                     InterstitialAdClass.count = 0;
                                   }
-                                  if (!Subscriptioncontroller
-                                          .isMonthlypurchased.value &&
-                                      !Subscriptioncontroller
-                                          .isYearlypurchased.value) {
+                                  if (!(Subscriptioncontroller
+                                          .isMonthlypurchased.value ||
+                                      Subscriptioncontroller
+                                          .isYearlypurchased.value)) {
                                     Get.to(() => const PremiumScreen(
                                           isSplash: true,
                                         ));
@@ -223,9 +223,9 @@ class _SplashScreenState extends State<SplashScreen>
           )
         ],
       ),
-      bottomNavigationBar: Obx(() => (!Subscriptioncontroller
-                      .isMonthlypurchased.value &&
-                  !Subscriptioncontroller.isYearlypurchased.value) &&
+      bottomNavigationBar: Obx(() => (!(Subscriptioncontroller
+                      .isMonthlypurchased.value ||
+                  Subscriptioncontroller.isYearlypurchased.value)) &&
               !InterstitialAdClass.isInterAddLoaded.value &&
               !AppOpenAdManager.isOpenAdLoaded.value &&
               isAdLoaded &&

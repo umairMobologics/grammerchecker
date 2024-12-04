@@ -23,8 +23,8 @@ class OnboardingController extends GetxController {
   }
 
   void goToHome() {
-    if (!Subscriptioncontroller.isMonthlypurchased.value &&
-        !Subscriptioncontroller.isYearlypurchased.value) {
+    if (!(Subscriptioncontroller.isMonthlypurchased.value ||
+        Subscriptioncontroller.isYearlypurchased.value)) {
       Get.to(() => const PremiumScreen(
             isSplash: true,
           ));

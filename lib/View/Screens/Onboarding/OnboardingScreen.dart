@@ -189,10 +189,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ? () {
                                   if (InterstitialAdClass.interstitialAd !=
                                           null &&
-                                      (!Subscriptioncontroller
-                                              .isMonthlypurchased.value &&
-                                          !Subscriptioncontroller
-                                              .isYearlypurchased.value)) {
+                                      (!(Subscriptioncontroller
+                                              .isMonthlypurchased.value ||
+                                          Subscriptioncontroller
+                                              .isYearlypurchased.value))) {
                                     InterstitialAdClass.showInterstitialAd(
                                         context);
                                     InterstitialAdClass.count = 0;
@@ -224,9 +224,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           )
         ],
       ),
-      bottomNavigationBar: Obx(() => (!Subscriptioncontroller
-                      .isMonthlypurchased.value &&
-                  !Subscriptioncontroller.isYearlypurchased.value) &&
+      bottomNavigationBar: Obx(() => (!(Subscriptioncontroller
+                      .isMonthlypurchased.value ||
+                  Subscriptioncontroller.isYearlypurchased.value)) &&
               isAdLoaded &&
               nativeAd3 != null
           ? Container(

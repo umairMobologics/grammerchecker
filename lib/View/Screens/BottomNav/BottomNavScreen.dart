@@ -107,8 +107,8 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
                 InterstitialAdClass.count += 1;
                 if (InterstitialAdClass.count ==
                         InterstitialAdClass.totalLimit &&
-                    (!Subscriptioncontroller.isMonthlypurchased.value &&
-                        !Subscriptioncontroller.isYearlypurchased.value)) {
+                    (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                        Subscriptioncontroller.isYearlypurchased.value))) {
                   InterstitialAdClass.showInterstitialAd(context);
                 }
 
@@ -201,10 +201,10 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
                             InterstitialAdClass.count += 1;
                             if (InterstitialAdClass.count ==
                                     InterstitialAdClass.totalLimit &&
-                                (!Subscriptioncontroller
-                                        .isMonthlypurchased.value &&
-                                    !Subscriptioncontroller
-                                        .isYearlypurchased.value)) {
+                                (!(Subscriptioncontroller
+                                        .isMonthlypurchased.value ||
+                                    Subscriptioncontroller
+                                        .isYearlypurchased.value))) {
                               InterstitialAdClass.showInterstitialAd(context);
                             }
                             log('current selected index $tabIndex');

@@ -392,10 +392,11 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
                                         if (InterstitialAdClass
                                                     .interstitialAd !=
                                                 null &&
-                                            (!Subscriptioncontroller
-                                                    .isMonthlypurchased.value &&
-                                                !Subscriptioncontroller
-                                                    .isYearlypurchased.value)) {
+                                            (!(Subscriptioncontroller
+                                                    .isMonthlypurchased.value ||
+                                                Subscriptioncontroller
+                                                    .isYearlypurchased
+                                                    .value))) {
                                           InterstitialAdClass
                                               .showInterstitialAd(context);
                                           InterstitialAdClass.count = 0;
@@ -484,9 +485,9 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
                       color: white,
                     ),
                     Obx(() => !textController.isresultLoaded.value
-                        ? (!Subscriptioncontroller.isMonthlypurchased.value &&
-                                    !Subscriptioncontroller
-                                        .isYearlypurchased.value) &&
+                        ? (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                                    Subscriptioncontroller
+                                        .isYearlypurchased.value)) &&
                                 isAdLoaded &&
                                 nativeAd3 != null
                             ? Container(
@@ -517,8 +518,8 @@ class _TranslatorScreenState extends State<TranslatorScreen> {
                     bannerAd != null &&
                     !InterstitialAdClass.isInterAddLoaded.value &&
                     !AppOpenAdManager.isOpenAdLoaded.value &&
-                    (!Subscriptioncontroller.isMonthlypurchased.value &&
-                        !Subscriptioncontroller.isYearlypurchased.value)
+                    (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                        Subscriptioncontroller.isYearlypurchased.value))
                 ? Container(
                     decoration: BoxDecoration(
                         color: white, border: Border.all(color: black)),

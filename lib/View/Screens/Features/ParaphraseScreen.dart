@@ -338,9 +338,9 @@ class _ParaphrasesScreenState extends State<ParaphrasesScreen> {
                             onSubmitted: () {},
                           ),
                         ),
-                        Obx(() => !Subscriptioncontroller
-                                    .isMonthlypurchased.value &&
-                                !Subscriptioncontroller.isYearlypurchased.value
+                        Obx(() => (!(Subscriptioncontroller
+                                    .isMonthlypurchased.value ||
+                                Subscriptioncontroller.isYearlypurchased.value))
                             ? Container(
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5)),
@@ -401,12 +401,12 @@ class _ParaphrasesScreenState extends State<ParaphrasesScreen> {
                                             if (InterstitialAdClass
                                                         .interstitialAd !=
                                                     null &&
-                                                (!Subscriptioncontroller
+                                                (!(Subscriptioncontroller
                                                         .isMonthlypurchased
-                                                        .value &&
-                                                    !Subscriptioncontroller
+                                                        .value ||
+                                                    Subscriptioncontroller
                                                         .isYearlypurchased
-                                                        .value)) {
+                                                        .value))) {
                                               InterstitialAdClass
                                                   .showInterstitialAd(context);
                                               InterstitialAdClass.count = 0;
@@ -498,9 +498,9 @@ class _ParaphrasesScreenState extends State<ParaphrasesScreen> {
                       color: white,
                     ),
                     Obx(() => !textController.isresultLoaded.value
-                        ? (!Subscriptioncontroller.isMonthlypurchased.value &&
-                                    !Subscriptioncontroller
-                                        .isYearlypurchased.value) &&
+                        ? (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                                    Subscriptioncontroller
+                                        .isYearlypurchased.value)) &&
                                 isAdLoaded &&
                                 nativeAd3 != null
                             ? Container(
@@ -531,8 +531,8 @@ class _ParaphrasesScreenState extends State<ParaphrasesScreen> {
                     bannerAd != null &&
                     !InterstitialAdClass.isInterAddLoaded.value &&
                     !AppOpenAdManager.isOpenAdLoaded.value &&
-                    (!Subscriptioncontroller.isMonthlypurchased.value &&
-                        !Subscriptioncontroller.isYearlypurchased.value)
+                    (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                        Subscriptioncontroller.isYearlypurchased.value))
                 ? Container(
                     decoration: BoxDecoration(
                         color: white, border: Border.all(color: black)),

@@ -149,9 +149,9 @@ class _CourseScreenState extends State<CourseScreen> {
           )
         ],
       ),
-      bottomNavigationBar: Obx(() => (!Subscriptioncontroller
-                      .isMonthlypurchased.value &&
-                  !Subscriptioncontroller.isYearlypurchased.value) &&
+      bottomNavigationBar: Obx(() => (!(Subscriptioncontroller
+                      .isMonthlypurchased.value ||
+                  Subscriptioncontroller.isYearlypurchased.value)) &&
               isAdLoaded &&
               nativeAd3 != null
           ? Container(

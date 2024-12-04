@@ -169,7 +169,7 @@ class _Level2SentenceScreenState extends State<Level2SentenceScreen> {
                     ? InkWell(
                         onTap: () {
                           Intro.of(context).start(
-                            reset: false,
+                            reset: true,
                           );
                         },
                         child: const Icon(Icons.info),
@@ -244,15 +244,19 @@ class _Level2SentenceScreenState extends State<Level2SentenceScreen> {
               itemBuilder: (context, index) {
                 Level2RewardModel question = controller.level2Question[index];
                 log("${controller.level2Question.length}");
-                totalwords = question.question
-                    .toLowerCase()
-                    .split(RegExp(r'\s+|\/'))
-                    .where((word) => word.isNotEmpty)
-                    .toList();
-                controller.WordLength.value = totalwords.length;
+                if (controller.tempWords.isEmpty) {
+                  totalwords = question.question
+                      .toLowerCase()
+                      .split(RegExp(r'\s+|\/'))
+                      .where((word) => word.isNotEmpty)
+                      .toList();
+                  controller.WordLength.value = totalwords.length;
 
-                log("word length is ${totalwords}");
-                controller.tempWords.value = totalwords;
+                  log("word length is ${totalwords}");
+                  controller.tempWords.value = totalwords;
+                } else {
+                  print("****************** refresh again");
+                }
 
                 return SingleChildScrollView(
                   child: Padding(
@@ -513,7 +517,8 @@ class _Level2SentenceScreenState extends State<Level2SentenceScreen> {
                                             await controller.checkAnswer(
                                                 useranswer,
                                                 question.correctAnswer);
-                                        showFeedback(isCorrect); // For SnackBar
+                                        showFeedback(isCorrect,
+                                            "sentence"); // For SnackBar
                                         controller.selectedWords.clear();
                                         await Future.delayed(
                                             Duration(seconds: 2));
@@ -526,7 +531,8 @@ class _Level2SentenceScreenState extends State<Level2SentenceScreen> {
                                             await controller.checkAnswer(
                                                 useranswer,
                                                 question.correctAnswer);
-                                        showFeedback(isCorrect); // For SnackBar
+                                        showFeedback(isCorrect,
+                                            "sentence"); // For SnackBar
                                         controller.isQuizCompleted.value = true;
                                         controller.level2Result(
                                             controller.level2Question);
@@ -602,8 +608,8 @@ class _Level2SentenceScreenState extends State<Level2SentenceScreen> {
             );
           }),
           bottomNavigationBar: Obx(() =>
-              (!Subscriptioncontroller.isMonthlypurchased.value &&
-                          !Subscriptioncontroller.isYearlypurchased.value) &&
+              (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                          Subscriptioncontroller.isYearlypurchased.value)) &&
                       !InterstitialAdClass.isInterAddLoaded.value &&
                       !AppOpenAdManager.isOpenAdLoaded.value &&
                       isAdLoaded &&
@@ -630,31 +636,36 @@ class _Level2SentenceScreenState extends State<Level2SentenceScreen> {
     return InkWell(
         key: key,
         onTap: () {
-          showDialog(
-            context: context,
-            builder: (_) => ProFeatureDialog(
-              onWatchAdTap: () {
-                Navigator.of(context).pop();
-                print("Watch Ad button tapped!");
-                // Split the correctAnswer into words
-                RewardedAdHelper.showRewardedAd(
-                  context: context,
-                  onRewardEarned: () {
-                    // Show clue or next hint here
-                    clueLogic(question);
-                  },
-                  onAdFailedToLoad: () {
-                    // Handle the case when no ad is available
-                    clueLogic(question);
-                  },
-                );
-              },
-              onGetProTap: () {
-                Get.to(() => PremiumScreen(isSplash: false));
-                print("Get Pro button tapped!");
-              },
-            ),
-          );
+          if ((!(Subscriptioncontroller.isMonthlypurchased.value ||
+              Subscriptioncontroller.isYearlypurchased.value))) {
+            showDialog(
+              context: context,
+              builder: (_) => ProFeatureDialog(
+                onWatchAdTap: () {
+                  Navigator.of(context).pop();
+                  print("Watch Ad button tapped!");
+                  // Split the correctAnswer into words
+                  RewardedAdHelper.showRewardedAd(
+                    context: context,
+                    onRewardEarned: () {
+                      // Show clue or next hint here
+                      clueLogic(question);
+                    },
+                    onAdFailedToLoad: () {
+                      // Handle the case when no ad is available
+                      clueLogic(question);
+                    },
+                  );
+                },
+                onGetProTap: () {
+                  Get.to(() => PremiumScreen(isSplash: false));
+                  print("Get Pro button tapped!");
+                },
+              ),
+            );
+          } else {
+            clueLogic(question);
+          }
         },
         child: TooltipWidget());
   }

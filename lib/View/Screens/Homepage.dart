@@ -173,10 +173,10 @@ class _HomepageState extends State<Homepage> {
                       child: InkWell(
                         onTap: () {
                           if (InterstitialAdClass.interstitialAd != null &&
-                              (!Subscriptioncontroller
-                                      .isMonthlypurchased.value &&
-                                  !Subscriptioncontroller
-                                      .isYearlypurchased.value)) {
+                              (!(Subscriptioncontroller
+                                      .isMonthlypurchased.value ||
+                                  Subscriptioncontroller
+                                      .isYearlypurchased.value))) {
                             InterstitialAdClass.showInterstitialAd(context);
                             InterstitialAdClass.count = 0;
                           }
@@ -282,10 +282,10 @@ class _HomepageState extends State<Homepage> {
                             if (InterstitialAdClass.count ==
                                     InterstitialAdClass.totalLimit &&
                                 InterstitialAdClass.interstitialAd != null &&
-                                (!Subscriptioncontroller
-                                        .isMonthlypurchased.value &&
-                                    !Subscriptioncontroller
-                                        .isYearlypurchased.value)) {
+                                (!(Subscriptioncontroller
+                                        .isMonthlypurchased.value ||
+                                    Subscriptioncontroller
+                                        .isYearlypurchased.value))) {
                               InterstitialAdClass.showInterstitialAd(context);
                             }
                             page.value = 3;
@@ -303,10 +303,10 @@ class _HomepageState extends State<Homepage> {
                             if (InterstitialAdClass.count ==
                                     InterstitialAdClass.totalLimit &&
                                 InterstitialAdClass.interstitialAd != null &&
-                                (!Subscriptioncontroller
-                                        .isMonthlypurchased.value &&
-                                    !Subscriptioncontroller
-                                        .isYearlypurchased.value)) {
+                                (!(Subscriptioncontroller
+                                        .isMonthlypurchased.value ||
+                                    Subscriptioncontroller
+                                        .isYearlypurchased.value))) {
                               InterstitialAdClass.showInterstitialAd(context);
                             }
                             page.value = 1;
@@ -331,10 +331,10 @@ class _HomepageState extends State<Homepage> {
                             if (InterstitialAdClass.count ==
                                     InterstitialAdClass.totalLimit &&
                                 InterstitialAdClass.interstitialAd != null &&
-                                (!Subscriptioncontroller
-                                        .isMonthlypurchased.value &&
-                                    !Subscriptioncontroller
-                                        .isYearlypurchased.value)) {
+                                (!(Subscriptioncontroller
+                                        .isMonthlypurchased.value ||
+                                    Subscriptioncontroller
+                                        .isYearlypurchased.value))) {
                               InterstitialAdClass.showInterstitialAd(context);
                             }
                             Get.to(() => CourseScreen());
@@ -352,10 +352,10 @@ class _HomepageState extends State<Homepage> {
                             if (InterstitialAdClass.count ==
                                     InterstitialAdClass.totalLimit &&
                                 InterstitialAdClass.interstitialAd != null &&
-                                (!Subscriptioncontroller
-                                        .isMonthlypurchased.value &&
-                                    !Subscriptioncontroller
-                                        .isYearlypurchased.value)) {
+                                (!(Subscriptioncontroller
+                                        .isMonthlypurchased.value ||
+                                    Subscriptioncontroller
+                                        .isYearlypurchased.value))) {
                               InterstitialAdClass.showInterstitialAd(context);
                             }
                             page.value = 0;
@@ -510,8 +510,8 @@ class _HomepageState extends State<Homepage> {
             ),
           ),
           bottomNavigationBar: Obx(() =>
-              (!Subscriptioncontroller.isMonthlypurchased.value &&
-                          !Subscriptioncontroller.isYearlypurchased.value) &&
+              (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                          Subscriptioncontroller.isYearlypurchased.value)) &&
                       !InterstitialAdClass.isInterAddLoaded.value &&
                       !AppOpenAdManager.isOpenAdLoaded.value &&
                       isAdLoaded &&

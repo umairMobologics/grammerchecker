@@ -48,8 +48,8 @@ class RewardedAdHelper {
     VoidCallback? onAdFailedToLoad,
     VoidCallback? onAdDismissed,
   }) async {
-    if (!Subscriptioncontroller.isMonthlypurchased.value &&
-        !Subscriptioncontroller.isYearlypurchased.value) {
+    if (!(Subscriptioncontroller.isMonthlypurchased.value ||
+        Subscriptioncontroller.isYearlypurchased.value)) {
       // Show a loading indicator while waiting for the ad
       showDialog(
         context: context,

@@ -127,9 +127,9 @@ class _GrammarScreenState extends State<GrammarScreen> {
           );
         }
       }),
-      bottomNavigationBar: Obx(() => (!Subscriptioncontroller
-                      .isMonthlypurchased.value &&
-                  !Subscriptioncontroller.isYearlypurchased.value) &&
+      bottomNavigationBar: Obx(() => (!(Subscriptioncontroller
+                      .isMonthlypurchased.value ||
+                  Subscriptioncontroller.isYearlypurchased.value)) &&
               isAdLoaded &&
               nativeAd3 != null
           ? Container(
@@ -270,8 +270,8 @@ class _GrammarScreenState extends State<GrammarScreen> {
               InterstitialAdClass.count += 1;
               if (InterstitialAdClass.count == InterstitialAdClass.totalLimit &&
                   InterstitialAdClass.interstitialAd != null &&
-                  (!Subscriptioncontroller.isMonthlypurchased.value &&
-                      !Subscriptioncontroller.isYearlypurchased.value)) {
+                  (!(Subscriptioncontroller.isMonthlypurchased.value ||
+                      Subscriptioncontroller.isYearlypurchased.value))) {
                 InterstitialAdClass.showInterstitialAd(context);
               }
               if (controller.currentPageIndex.value <
