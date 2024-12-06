@@ -429,7 +429,6 @@ class _Level2SentenceScreenState extends State<Level2SentenceScreen> {
                                       onTap: () {
                                         controller.removeWordFromSequence(word);
                                         controller.addWordToQuestion(word);
-                                        controller.hintIndex.value--;
                                       },
                                       child: FadeInUp(
                                         child: Container(
@@ -519,11 +518,13 @@ class _Level2SentenceScreenState extends State<Level2SentenceScreen> {
                                                 question.correctAnswer);
                                         showFeedback(isCorrect,
                                             "sentence"); // For SnackBar
-                                        controller.selectedWords.clear();
+
                                         await Future.delayed(
-                                            Duration(seconds: 2));
-                                        controller.hintIndex.value = 0;
+                                            Duration(seconds: 1));
+
                                         controller.goToNextPageLevel2();
+                                        controller.selectedWords.clear();
+                                        controller.tempWords.clear();
                                       } else {
                                         String useranswer =
                                             controller.selectedWords.join(' ');

@@ -164,11 +164,12 @@ class _HomepageState extends State<Homepage> {
           backgroundColor: white,
           body: SingleChildScrollView(
             child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  children: [
-                    SlideInLeft(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 5),
+                    child: SlideInLeft(
                       duration: Duration(seconds: 2),
                       child: InkWell(
                         onTap: () {
@@ -180,6 +181,8 @@ class _HomepageState extends State<Homepage> {
                             InterstitialAdClass.showInterstitialAd(context);
                             InterstitialAdClass.count = 0;
                           }
+                          // Subscriptioncontroller.isMonthlypurchased.value =
+                          //     true;
                           Get.to(() => RewardScreen());
                         },
                         child: Container(
@@ -268,8 +271,11 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ),
                     ),
-                    SizedBox(height: mq.height * 0.02),
-                    Row(
+                  ),
+                  SizedBox(height: mq.height * 0.005),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         featureCard(
@@ -315,10 +321,13 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: mq.height * 0.02,
-                    ),
-                    Row(
+                  ),
+                  SizedBox(
+                    height: mq.height * 0.015,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         featureCard(
@@ -364,8 +373,31 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: mq.height * 0.02),
-                    SlideInUp(
+                  ),
+                  SizedBox(height: mq.height * 0.015),
+                  Obx(() => (!(Subscriptioncontroller
+                                  .isMonthlypurchased.value ||
+                              Subscriptioncontroller
+                                  .isYearlypurchased.value)) &&
+                          !InterstitialAdClass.isInterAddLoaded.value &&
+                          !AppOpenAdManager.isOpenAdLoaded.value &&
+                          isAdLoaded &&
+                          nativeAd3 != null
+                      ? Container(
+                          decoration: BoxDecoration(
+                              color: white, border: Border.all(color: black)),
+                          height: 150,
+                          width: double.infinity,
+                          child: AdWidget(ad: nativeAd3!))
+                      : (Subscriptioncontroller.isMonthlypurchased.value ||
+                              Subscriptioncontroller.isYearlypurchased.value)
+                          ? SizedBox()
+                          : ShimmarrNativeSmall(mq: mq, height: 135)),
+                  // SizedBox(height: mq.height * 0.015),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12.0, vertical: 10),
+                    child: SlideInUp(
                       duration: Duration(seconds: 2),
                       child: InkWell(
                         onTap: () => Get.to(() => QuizScreen()),
@@ -445,87 +477,87 @@ class _HomepageState extends State<Homepage> {
                         ),
                       ),
                     ),
-                    // SlideInUp(
-                    //   duration: Duration(seconds: 2),
-                    //   child: Container(
-                    //     width: double.infinity,
-                    //     padding: EdgeInsets.all(8),
-                    //     decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(12),
-                    //       color: mainClr,
-                    //     ),
-                    //     child: Column(
-                    //       children: [
-                    //         Text(
-                    //           "English Grammar Test",
-                    //           style: customTextStyle(
-                    //               fontSize: mq.height * 0.025,
-                    //               fontWeight: FontWeight.bold,
-                    //               color: white),
-                    //         ),
-                    //         SizedBox(height: mq.height * 0.01),
-                    //         Text(
-                    //           "Begin the English Grammar Test to assess and improve your grammar skills.",
-                    //           textAlign: TextAlign.center,
-                    //           style: customTextStyle(
-                    //               // fontSize: mq.height * 0.018,
+                  ),
+                  // SlideInUp(
+                  //   duration: Duration(seconds: 2),
+                  //   child: Container(
+                  //     width: double.infinity,
+                  //     padding: EdgeInsets.all(8),
+                  //     decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(12),
+                  //       color: mainClr,
+                  //     ),
+                  //     child: Column(
+                  //       children: [
+                  //         Text(
+                  //           "English Grammar Test",
+                  //           style: customTextStyle(
+                  //               fontSize: mq.height * 0.025,
+                  //               fontWeight: FontWeight.bold,
+                  //               color: white),
+                  //         ),
+                  //         SizedBox(height: mq.height * 0.01),
+                  //         Text(
+                  //           "Begin the English Grammar Test to assess and improve your grammar skills.",
+                  //           textAlign: TextAlign.center,
+                  //           style: customTextStyle(
+                  //               // fontSize: mq.height * 0.018,
 
-                    //               // fontWeight: FontWeight.bold,
-                    //               color: white),
-                    //         ),
-                    //         SizedBox(height: mq.height * 0.02),
-                    //         InkWell(
-                    //           onTap: () => Get.to(() => QuizScreen()),
-                    //           child: Container(
-                    //               decoration: BoxDecoration(
-                    //                 borderRadius: BorderRadius.circular(12),
-                    //                 color: white,
-                    //               ),
-                    //               padding: EdgeInsets.all(12),
-                    //               child: Row(
-                    //                 mainAxisAlignment: MainAxisAlignment.center,
-                    //                 children: [
-                    //                   Text(
-                    //                     "Let's GO",
-                    //                     style: customTextStyle(
-                    //                         fontSize: mq.height * 0.025,
-                    //                         fontWeight: FontWeight.bold,
-                    //                         color: mainClr),
-                    //                   ),
-                    //                   Icon(
-                    //                     Icons.arrow_forward_ios,
-                    //                     color: mainClr,
-                    //                     size: 20,
-                    //                   )
-                    //                 ],
-                    //               )),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
-                ),
+                  //               // fontWeight: FontWeight.bold,
+                  //               color: white),
+                  //         ),
+                  //         SizedBox(height: mq.height * 0.02),
+                  //         InkWell(
+                  //           onTap: () => Get.to(() => QuizScreen()),
+                  //           child: Container(
+                  //               decoration: BoxDecoration(
+                  //                 borderRadius: BorderRadius.circular(12),
+                  //                 color: white,
+                  //               ),
+                  //               padding: EdgeInsets.all(12),
+                  //               child: Row(
+                  //                 mainAxisAlignment: MainAxisAlignment.center,
+                  //                 children: [
+                  //                   Text(
+                  //                     "Let's GO",
+                  //                     style: customTextStyle(
+                  //                         fontSize: mq.height * 0.025,
+                  //                         fontWeight: FontWeight.bold,
+                  //                         color: mainClr),
+                  //                   ),
+                  //                   Icon(
+                  //                     Icons.arrow_forward_ios,
+                  //                     color: mainClr,
+                  //                     size: 20,
+                  //                   )
+                  //                 ],
+                  //               )),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                ],
               ),
             ),
           ),
-          bottomNavigationBar: Obx(() =>
-              (!(Subscriptioncontroller.isMonthlypurchased.value ||
-                          Subscriptioncontroller.isYearlypurchased.value)) &&
-                      !InterstitialAdClass.isInterAddLoaded.value &&
-                      !AppOpenAdManager.isOpenAdLoaded.value &&
-                      isAdLoaded &&
-                      nativeAd3 != null
-                  ? Container(
-                      decoration: BoxDecoration(
-                          color: white, border: Border.all(color: black)),
-                      height: 150,
-                      width: double.infinity,
-                      child: AdWidget(ad: nativeAd3!))
-                  : (Subscriptioncontroller.isMonthlypurchased.value ||
-                          Subscriptioncontroller.isYearlypurchased.value)
-                      ? SizedBox()
-                      : ShimmarrNativeSmall(mq: mq, height: 135)),
+          // bottomNavigationBar: Obx(() =>
+          //     (!(Subscriptioncontroller.isMonthlypurchased.value ||
+          //                 Subscriptioncontroller.isYearlypurchased.value)) &&
+          //             !InterstitialAdClass.isInterAddLoaded.value &&
+          //             !AppOpenAdManager.isOpenAdLoaded.value &&
+          //             isAdLoaded &&
+          //             nativeAd3 != null
+          //         ? Container(
+          //             decoration: BoxDecoration(
+          //                 color: white, border: Border.all(color: black)),
+          //             height: 150,
+          //             width: double.infinity,
+          //             child: AdWidget(ad: nativeAd3!))
+          //         : (Subscriptioncontroller.isMonthlypurchased.value ||
+          //                 Subscriptioncontroller.isYearlypurchased.value)
+          //             ? SizedBox()
+          //             : ShimmarrNativeSmall(mq: mq, height: 135)),
         ));
   }
 }

@@ -49,7 +49,16 @@ class Level1RewardService {
           .map((doc) =>
               Level1RewardModel.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
-
+      // Print each question in the required format
+      for (var question in questions) {
+        log("""
+      Level2RewardModel(
+        question: "${question.question}",
+        correctAnswer: "${question.correctAnswer}",
+        explanation: "${question.explanation}",
+      ),
+      """);
+      }
       log("Fetched ${questions.length} questions from firebase");
 
       // Save the fetched questions to the local database for future use
@@ -70,7 +79,16 @@ class Level1RewardService {
     try {
       List<Level1RewardModel> localQuestions =
           await DatabaseHelper().getLevel1RewardData();
-
+      // Print each question in the required format
+      for (var question in localQuestions) {
+        log("""
+      Level2RewardModel(
+        question: "${question.question}",
+        correctAnswer: "${question.correctAnswer}",
+        explanation: "${question.explanation}",
+      ),
+      """);
+      }
       // Return the questions from the local DB
       return localQuestions;
     } catch (e) {

@@ -47,7 +47,7 @@ void showFeedback(bool isCorrect, String type) {
     'Message!',
     message,
     snackPosition: SnackPosition.BOTTOM,
-    duration: Duration(seconds: 2),
+    duration: Duration(seconds: 1),
     backgroundColor: color,
     colorText: Colors.white,
     borderRadius: 10,

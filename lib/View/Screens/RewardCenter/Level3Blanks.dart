@@ -234,18 +234,15 @@ class _Level3BlanksScreenState extends State<Level3BlanksScreen> {
               itemBuilder: (context, index) {
                 Level3RewardModel question = controller.level3Question[index];
                 log("${controller.level3Question.length}");
-                if (controller.tempWords.isEmpty) {
-                  options = question.options
-                      .split('/')
-                      .where((word) => word.isNotEmpty)
-                      .toList();
-                  controller.WordLength.value = options.length;
 
-                  log("Options are  ${options}");
-                  controller.tempWords.value = options;
-                } else {
-                  print("****************** refresh again");
-                }
+                options = question.options
+                    .split('/')
+                    .where((word) => word.isNotEmpty)
+                    .toList();
+                controller.WordLength.value = options.length;
+
+                log("Options are  ${options}");
+                controller.tempWords.value = options;
 
                 return Padding(
                   padding: const EdgeInsets.all(16.0),

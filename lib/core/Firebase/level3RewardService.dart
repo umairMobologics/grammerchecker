@@ -54,6 +54,17 @@ class Level3RewardService {
 
       log("Fetched ${questions.length} questions from Firebase .");
 
+      // Print each question in the required format
+      for (var question in questions) {
+        print("""
+      Level3RewardModel(
+        question: "${question.question}",
+        options: '${question.options}',
+        correctAnswer: "${question.correctAnswer}",
+        explanation: "${question.explanation}",
+      ),
+      """);
+      }
       // Save the fetched questions to the local database for future use
       await _saveQuestionsToLocalDatabase(questions, category);
 

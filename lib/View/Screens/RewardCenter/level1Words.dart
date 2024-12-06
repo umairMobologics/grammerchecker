@@ -542,10 +542,13 @@ class _Level1WordsScreenState extends State<Level1WordsScreen> {
                                                 question.correctAnswer);
                                         showFeedback(
                                             isCorrect, "word"); // For SnackBar
-                                        controller.selectedWords.clear();
+
                                         await Future.delayed(
-                                            Duration(seconds: 2));
+                                            Duration(seconds: 1));
+
                                         controller.goToNextPagelevel1();
+                                        controller.selectedWords.clear();
+                                        controller.tempWords.clear();
                                       } else {
                                         String useranswer =
                                             controller.selectedWords.join('');

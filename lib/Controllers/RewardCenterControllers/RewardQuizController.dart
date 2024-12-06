@@ -26,7 +26,7 @@ class RewardQuizController extends GetxController {
 
   var currentPageIndex = 1.obs;
   var WordLength = 0.obs;
-  RxInt hintIndex = 0.obs;
+
   PageController pageController = PageController();
 // Declare tempWords as an RxList
   RxList<String> tempWords = <String>[].obs;
