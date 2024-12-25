@@ -1,0 +1,197 @@
+import 'dart:developer';
+import 'dart:ui';
+
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:grammar_checker_app_updated/Controllers/InAppPurchases/inappPurchaseController.dart';
+import 'package:grammar_checker_app_updated/Controllers/QuizController/QuizController.dart';
+import 'package:grammar_checker_app_updated/View/Screens/BottomNav/BottomNavScreen.dart';
+import 'package:grammar_checker_app_updated/View/Screens/Grammar_AI_Tutor/TutorDashBoardList.dart';
+import 'package:grammar_checker_app_updated/View/Screens/SplashScreen.dart';
+import 'package:grammar_checker_app_updated/core/Helper/RemoteConfig/remoteConfigs.dart';
+import 'package:grammar_checker_app_updated/core/Helper/checkInternetConnectivity.dart';
+import 'package:grammar_checker_app_updated/core/Localization/Languages.dart';
+// import 'package:grammar_checker_app_updated/firebase_options.dart';
+import 'package:grammar_checker_app_updated/core/utils/colors.dart';
+import 'package:grammar_checker_app_updated/core/utils/customTextStyle.dart';
+import 'package:grammar_checker_app_updated/firebase_options.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'View/Screens/Onboarding/OnboardingScreen.dart';
+import 'core/databaseHelper/HiveDatabase/HiveBox.dart';
+import 'core/model/TutorModels/MessageModel.dart';
+
+late Size mq;
+//InApp Purchase
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+Future<Locale?> getSavedLocale() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? languageCode = prefs.getString('languageCode');
+  String? countryCode = prefs.getString('countryCode');
+
+  if (languageCode != null && countryCode != null) {
+    return Locale(languageCode, countryCode);
+  }
+  return null;
+}
+
+final StartQuizController quizController =
+    Get.put(StartQuizController(), permanent: true);
+final liveInternet = Get.put(NetworkController(), permanent: true);
+InAppPurchaseController Subscriptioncontroller =
+    Get.put(InAppPurchaseController(InAppPurchase.instance), permanent: true)
+      ..initialize();
+// final TTSController ttsController = Get.put(TTSController(), permanent: true);
+// import 'package:shared_preferences/shared_preferences.dart';
+int? initScreen;
+var isSelectable = false.obs;
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+//for getting languages
+  Locale? savedLocale = await getSavedLocale();
+
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  initScreen = preferences.getInt('initScreen');
+  await preferences.setInt('initScreen', 1);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  MobileAds.instance.initialize();
+  await Subscriptioncontroller.restorePurchases();
+
+  //init hive
+  await Hive.initFlutter();
+  Hive.registerAdapter(SaveMessagesModelAdapter());
+  Hive.registerAdapter(ConversationAdapter());
+
+  await HiveBox.initHive();
+
+//crashlytics and analytics
+
+  //remote configurations
+  try {
+    RemoteConfig.initConfig();
+  } catch (e) {
+    log("got some error");
+  }
+  //analytics
+  FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+  // set observer
+  FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance);
+  //crashlytics
+  // Pass all uncaught "fatal" errors from the framework to Crashlytics
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+  // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  //     // systemNavigationBarColor: Colors.blue, // navigation bar color
+  //     statusBarColor: mainClr));
+  //for setting orientation to portrait only
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((v) {
+    // runApp(
+    //   DevicePreview(
+    //       enabled: !kReleaseMode,
+    //       builder: (context) => MyApp(savedLocale: savedLocale)),
+    // ); // Wrap your app
+
+    runApp(MyApp(savedLocale: savedLocale));
+  });
+}
+
+class MyApp extends StatefulWidget {
+  final Locale? savedLocale;
+  const MyApp({super.key, this.savedLocale});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    DependencyInjection.init();
+  }
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return Builder(
+      builder: (context) {
+        // Initialize global variable
+        mq = MediaQuery.sizeOf(context);
+        return GetMaterialApp(
+          navigatorKey:
+              navigatorKey, // Assign the navigator key to the MaterialApp
+          locale: widget.savedLocale ?? Get.deviceLocale,
+          navigatorObservers: [
+            FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+          ],
+          // locale: const Locale('zh', 'Pk'),
+          translations: Languages(), // This provides the translations
+          fallbackLocale:
+              const Locale('en', 'US'), // This sets the fallback locale
+          title: "Ai Grammar Checker",
+          debugShowCheckedModeBanner: false,
+          useInheritedMediaQuery: true,
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(0.82)),
+              child: child!,
+            );
+          },
+          theme: ThemeData(
+            visualDensity: VisualDensity.comfortable,
+            useMaterial3: true,
+            appBarTheme: AppBarTheme(
+                // centerTitle: true,
+                backgroundColor: mainClr,
+                iconTheme: const IconThemeData(color: white),
+                // backgroundColor: white,
+
+                elevation: 2,
+                titleTextStyle: customTextStyle(
+                  color: white,
+                  fontSize: MediaQuery.of(context).size.height * 0.030,
+                  fontWeight: FontWeight.w500,
+                )),
+          ),
+          initialRoute:
+              initScreen == 0 || initScreen == null ? "onboard" : "home",
+
+          routes: {
+            "home": (context) => SplashScreen(),
+            "onboard": (context) => OnboardingScreen(),
+            '/bottomNavScreen': (context) => const BottomNavBarScreen(),
+            '/tutorList': (context) => TutorList(isbottom: false),
+          },
+          onUnknownRoute: (settings) {
+            return MaterialPageRoute(
+              builder: (context) => BottomNavBarScreen(),
+            );
+          },
+        );
+      },
+    );
+
+    // home: SplashScreen()
+
+    // );
+  }
+}
